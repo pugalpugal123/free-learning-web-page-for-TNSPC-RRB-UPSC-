@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Knowledge Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFD700 0%, #FFDF00 50%, #FFEA00 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Top Bar for Navigation and Stats */
+        .top-bar {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .exit-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exit-btn:hover {
+            transform: scale(1.05);
+            background: #ff6b81;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .stat-correct { color: #2ed573; }
+        .stat-wrong { color: #ff4757; }
+        .stat-skip { color: #feca57; }
+
+        /* Timer Circular UI */
+        .timer-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulseTimer 1s infinite alternate;
+        }
+
+        .timer-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 6px solid #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 2rem;
+            color: #111;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .timer-warning {
+            border-color: #ff4757;
+            color: #ff4757;
+            animation: shake 0.5s infinite;
+        }
+
+        /* Quiz Box */
+        .quiz-box {
+            background-color: #111111;
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            min-height: 60px; /* Prevent jitter when question changes */
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            background: linear-gradient(90deg, #1e1e1e, #2a2a2a);
+            color: white;
+            border: 2px solid #444;
+            padding: 15px 25px;
+            border-radius: 50px; 
+            font-size: 1.1rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
+            text-align: left;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            background: linear-gradient(90deg, #2a2a2a, #333);
+        }
+        
+        /* Selected States */
+        .option-btn.selected {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .option-btn.correct {
+            border-color: #2ed573;
+            background: rgba(46, 213, 115, 0.2);
+        }
+
+        .option-btn.wrong {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .option-label {
+            font-weight: 800;
+            color: #FFD700;
+            margin-right: 20px;
+            min-width: 25px;
+        }
+
+        /* Bottom Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .skip-btn {
+            background: #444;
+            color: white;
+        }
+
+        .skip-btn:hover:not(:disabled) { background: #555; }
+
+        .submit-btn {
+            background: #FFD700;
+            color: #111;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #FFEA00;
+            transform: scale(1.02);
+        }
+        
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseTimer {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 600px) {
+            .quiz-box { padding: 20px; }
+            .question { font-size: 1.2rem; }
+            .option-btn { padding: 12px 20px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <button class="exit-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-arrow-left"></i> EXIT
+        </button>
+        <div class="stats-container">
+            <span class="stat-correct" title="Correct"><i class="fa-solid fa-check"></i> <span id="score-right">0</span></span>
+            <span class="stat-wrong" title="Wrong"><i class="fa-solid fa-xmark"></i> <span id="score-wrong">0</span></span>
+            <span class="stat-skip" title="Skipped"><i class="fa-solid fa-forward-step"></i> <span id="score-skip">0</span></span>
+        </div>
+    </div>
+
+    <div class="timer-container" id="timer-container" style="display: none;">
+        <div class="timer-circle" id="timer">15</div>
+    </div>
+
+    <!-- Centered Loader -->
+    <div id="initial-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh;">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #111; margin-bottom: 20px;"></i>
+        <h2 style="color: #111;" id="loader-text">Loading endless questions...</h2>
+    </div>
+
+    <div class="quiz-box" id="quiz-box" style="display: none;">
+        <div class="question" id="question-text">Loading question...</div>
+        <div class="options" id="options-container">
+            <!-- Options will be injected by JS -->
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn skip-btn" id="skip-btn" onclick="skipQuestion()">Skip</button>
+            <button class="control-btn submit-btn" id="submit-btn" onclick="submitAnswer()" disabled>Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // Core Variables
+        let questionQueue = [];
+        let currentQ = null;
+        let selectedOptionIndex = null;
+        let timeLeft = 15;
+        let timerInterval;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let scoreSkipped = 0;
+        let isFetching = false;
+
+        // Elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const timerElement = document.getElementById('timer');
+        const submitBtn = document.getElementById('submit-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const scoreRightElement = document.getElementById('score-right');
+        const scoreWrongElement = document.getElementById('score-wrong');
+        const scoreSkipElement = document.getElementById('score-skip');
+
+        const labels = ['A', 'B', 'C', 'D'];
+
+        // Determine Category, Language and Time from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category') || 'gk'; // Default to gk
+        const langParam = urlParams.get('lang') || localStorage.getItem('selectedLang') || 'en'; // Default to en
+        const timeParam = parseInt(urlParams.get('time') || localStorage.getItem('selectedTime')) || 15; // Default to 15 seconds if undefined
+
+        // Persistent Seen Questions Storage
+        // If it's gk and we have a specific topic, scope the storage key to that topic
+        const subTopicParam = urlParams.get('topic');
+        const storageKey = subTopicParam ? `seenQuestions_${categoryParam}_${subTopicParam}` : `seenQuestions_${categoryParam}`;
+        
+        const savedSeen = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        const seenQuestions = new Set(savedSeen);
+
+        function saveSeen() {
+            localStorage.setItem(storageKey, JSON.stringify(Array.from(seenQuestions)));
+        }
+        
+        // Static UI Translations
+        const staticTranslations = {
+            'en': {
+                'title': { 'gk': 'General Knowledge Quiz', 'upsc': 'UPSC Quiz', 'tnpsc': 'TNPSC Quiz', 'rbi': 'Railway Recruitment Board (RRB) Quiz', 'communication': 'Communication Quiz' },
+                'loading': 'Loading endless questions...',
+                'fetching': 'Fetching more endless questions...',
+                'translating': 'Translating...',
+                'skip': 'Skip',
+                'submit': 'Submit',
+                'next': 'Next Question',
+                'completed': 'Quiz Completed! 🎉',
+                'correct': 'Correct',
+                'wrong': 'Wrong/Skipped',
+                'home': 'Return to Home'
+            },
+            'hi': {
+                'title': { 'gk': 'सामान्य ज्ञान प्रश्नोत्तरी', 'upsc': 'UPSC प्रश्नोत्तरी', 'tnpsc': 'TNPSC प्रश्नोत्तरी', 'rbi': 'Railway Recruitment Board (RRB) प्रश्नोत्तरी', 'communication': 'Communication Quiz' },
+                'loading': 'अनंत प्रश्न लोड हो रहे हैं...',
+                'fetching': 'और प्रश्न लाए जा रहे हैं...',
+                'translating': 'अनुवाद हो रहा है...',
+                'skip': 'छोड़ें',
+                'submit': 'जमा करें',
+                'next': 'अगला प्रश्न',
+                'completed': 'प्रश्नोत्तरी पूर्ण! 🎉',
+                'correct': 'सही',
+                'wrong': 'गलत/छोड़े गए',
+                'home': 'होम पर लौटें'
+            },
+            'ta': {
+                'title': { 'gk': 'பொது அறிவு வினாடி வினா', 'upsc': 'UPSC வினாடி வினா', 'tnpsc': 'TNPSC வினாடி வினா', 'rbi': 'Railway Recruitment Board (RRB) வினாடி வினா', 'communication': 'Communication Quiz' },
+                'loading': 'கேள்விகள் ஏற்றப்படுகிறன...',
+                'fetching': 'மேலும் கேள்விகள் ஏற்றப்படுகிறன...',
+                'translating': 'மொழிபெயர்க்கப்படுகிறது...',
+                'skip': 'தவிர்',
+                'submit': 'சமர்ப்பி',
+                'next': 'அடுத்த கேள்வி',
+                'completed': 'வினாடி வினா முடிந்தது! 🎉',
+                'correct': 'சரி',
+                'wrong': 'தவறு/தவிர்க்கப்பட்டது',
+                'home': 'முகப்புக்குத் திரும்பு'
+            }
+        };
+
+        const t = staticTranslations[langParam] || staticTranslations['en'];
+
+        // Let's set the page title and initial buttons dynamically
+        document.title = t.title[categoryParam] || t.title['gk'];
+        skipBtn.innerText = t.skip;
+        submitBtn.innerText = t.submit;
+        
+        // Translate exit button text implicitly
+        document.querySelector('.exit-btn').innerHTML = `<i class="fa-solid fa-arrow-left"></i> ${langParam === 'hi' ? 'बाहर निकलें' : (langParam === 'ta' ? 'வெளியேறு' : 'EXIT')}`;
+
+        // Utility to decode HTML entities from the API
+        function decodeHTML(html) {
+            const txt = document.createElement('textarea');
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
+        // Unofficial Google Translate API (Free, Client-Side Proxy)
+        async function translateText(text) {
+            if (langParam === 'en') return text;
+            try {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${langParam}&dt=t&q=${encodeURIComponent(text)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                return data[0].map(item => item[0]).join('');
+            } catch(e) {
+                console.error("Translation fail", e);
+                return text; // Fallback to English 
+            }
+        }
+
+        let globalExternalDB = null;
+
+        function loadScript(url) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = url;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        async function fetchQuestions() {
+            if (isFetching) return;
+            isFetching = true;
+
+            let externalDB = null;
+            if (globalExternalDB) {
+                externalDB = globalExternalDB;
+            } else {
+                try {
+                    if (categoryParam === 'communication') {
+                        await loadScript('communication_db.js');
+                        globalExternalDB = window.COMM_DB;
+                    } else {
+                        await loadScript('questions_database.js');
+                        globalExternalDB = window.EXTERNAL_DB;
+                    }
+                    externalDB = globalExternalDB;
+                } catch (e) { console.log('External DB not found or script load failed.', e); }
+            }
+
+            const mapQuestions = (list) => {
+                return list.map(q => {
+                    let questionText = q.question;
+                    let incorrect = q.incorrect_answers;
+                    let correct = q.correct_answer;
+                    let isTranslated = false;
+
+                    // Support bilingual fields (question_en, question_ta, etc.)
+                    if (langParam === 'ta' && q.question_ta) {
+                        questionText = q.question_ta;
+                        incorrect = q.incorrect_answers_ta;
+                        correct = q.correct_answer_ta;
+                        isTranslated = true;
+                    } else if (q.question_en) {
+                        questionText = q.question_en;
+                        incorrect = q.incorrect_answers_en;
+                        correct = q.correct_answer_en;
+                        isTranslated = true;
+                    }
+
+                    const options = [...incorrect, correct].map(decodeHTML);
+                    // Shuffle options
+                    for (let i = options.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [options[i], options[j]] = [options[j], options[i]];
+                    }
+                    return {
+                        question: decodeHTML(questionText),
+                        options: options,
+                        correctAnswer: options.indexOf(decodeHTML(correct)),
+                        translated: isTranslated
+                    };
+                });
+            };
+
+            const pickBatch = (localList, exKeys, count = 10) => {
+                const combinedRaw = [];
+                // Unseen from local
+                if (localList && localList.length > 0) {
+                    let unseenLocal = localList.filter(q => {
+                        let txt = q.question || q.question_en;
+                        return txt && !seenQuestions.has(decodeHTML(txt));
+                    });
+                    if (unseenLocal.length === 0) {
+                        unseenLocal = localList;
+                        seenQuestions.clear();
+                        saveSeen();
+                    }
+                    // Shuffle local and take up to 'count'
+                    for (let i = unseenLocal.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [unseenLocal[i], unseenLocal[j]] = [unseenLocal[j], unseenLocal[i]];
+                    }
+                    combinedRaw.push(...unseenLocal.slice(0, count));
+                }
+                
+                // Unseen from external
+                let keys = Array.isArray(exKeys) ? exKeys : [exKeys];
+                keys.forEach(key => {
+                    if (externalDB && key && externalDB[key]) {
+                        const rawArr = externalDB[key];
+                        let selectedData = [];
+                        let attempts = 0;
+                        while (selectedData.length < count && attempts < count * 5) {
+                            const idx = Math.floor(Math.random() * rawArr.length);
+                            const q = rawArr[idx];
+                            let txt = q.question || q.question_en;
+                            if (txt && !seenQuestions.has(decodeHTML(txt))) {
+                                selectedData.push(q);
+                                seenQuestions.add(decodeHTML(txt)); // temporary add to prevent dupes in selection
+                            }
+                            attempts++;
+                        }
+                        if (selectedData.length === 0 && rawArr.length > 0) {
+                            seenQuestions.clear();
+                            saveSeen();
+                            attempts = 0;
+                            while (selectedData.length < count && attempts < count * 5) {
+                                const idx = Math.floor(Math.random() * rawArr.length);
+                                const q = rawArr[idx];
+                                if (!selectedData.includes(q)) selectedData.push(q);
+                                attempts++;
+                            }
+                        }
+                        combinedRaw.push(...selectedData);
+                    }
+                });
+
+                if (combinedRaw.length === 0) return [];
+                
+                // Final shuffle to mix Local and External
+                for (let i = combinedRaw.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [combinedRaw[i], combinedRaw[j]] = [combinedRaw[j], combinedRaw[i]];
+                }
+                
+                const finalRaw = combinedRaw.slice(0, count);
+                const mapped = mapQuestions(finalRaw);
+                mapped.forEach(m => seenQuestions.add(m.question));
+                return mapped;
+            };
+
+            try {
+                // Determine source: If UPSC, use local custom syllabus-based questions
+                if (categoryParam === 'upsc') {
+                    let upscQuestions = [
+                        // Core Indian Polity
+                        { question: "Under which Article of the Indian Constitution can the President dissolve the Lok Sabha?", incorrect_answers: ["Article 75", "Article 81", "Article 356"], correct_answer: "Article 85" },
+                        { question: "The 'Basic Structure Doctrine' of the Indian Constitution was established in which landmark judgement?", incorrect_answers: ["Golaknath case", "Minerva Mills case", "Berubari Union case"], correct_answer: "Kesavananda Bharati case" },
+                        { question: "Who holds the power to increase the number of judges in the Supreme Court of India?", incorrect_answers: ["President of India", "Chief Justice of India", "Law Commission"], correct_answer: "Parliament" },
+                        
+                        // Economy
+                        { question: "Which of the following curves shows the inverse relationship between unemployment and the rate of inflation?", incorrect_answers: ["Laffer Curve", "Lorenz Curve", "Kuznets Curve"], correct_answer: "Phillips Curve" },
+                        { question: "In computing the human development index (HDI), which of the following is NOT taken into account?", incorrect_answers: ["Life expectancy at birth", "Expected years of schooling", "Gross National Income per capita"], correct_answer: "Infant Mortality Rate" },
+                        { question: "What is the primary objective of the 'Fiscal Responsibility and Budget Management (FRBM) Act'?", incorrect_answers: ["To print more currency", "To increase foreign direct investment", "To privatize public sector banks"], correct_answer: "To reduce fiscal deficit and ensure macroeconomic stability" },
+                        
+                        // Environment & Geography
+                        { question: "Which atmospheric layer contains the ozone layer that protects the Earth from harmful UV radiation?", incorrect_answers: ["Troposphere", "Mesosphere", "Thermosphere"], correct_answer: "Stratosphere" },
+                        { question: "The 'Cartagena Protocol' is an international agreement related to:", incorrect_answers: ["Ozone Depletion", "Climate Change Reduction", "Marine Pollution"], correct_answer: "Biosafety of living modified organisms (LMOs)" },
+                        { question: "Which Indian state shares boundaries with the maximum number of other states?", incorrect_answers: ["Madhya Pradesh", "Maharashtra", "Assam"], correct_answer: "Uttar Pradesh" },
+                        
+                        // History & Culture
+                        { question: "Who established the 'Ramakrishna Mission' in 1897?", incorrect_answers: ["Ramakrishna Paramahamsa", "Dayananda Saraswati", "Raja Ram Mohan Roy"], correct_answer: "Swami Vivekananda" },
+                        { question: "During the Indian freedom struggle, who led the 'Salt Satyagraha' in Tamil Nadu (Vedaranyam March)?", incorrect_answers: ["K. Kamaraj", "Subramaniya Siva", "V.O. Chidambaram Pillai"], correct_answer: "C. Rajagopalachari" },
+                        { question: "The Harappan civilization site of 'Lothal' is famous primarily for being what?", incorrect_answers: ["The largest city of the civilization", "A major religious center", "An extensive agricultural hub"], correct_answer: "A dockyard town" },
+                        
+                        // Science & Tech
+                        { question: "In the context of space technology, what kind of orbit allows a satellite to appear stationary relative to a point on Earth?", incorrect_answers: ["Sun-synchronous orbit", "Low Earth Orbit (LEO)", "Polar orbit"], correct_answer: "Geostationary orbit" },
+                        { question: "Which technology forms the fundamental basis of cryptocurrencies like Bitcoin?", incorrect_answers: ["Quantum Computing", "Deep Learning", "Cloud Storage"], correct_answer: "Blockchain" },
+                        { question: "What is 'CRISPR-Cas9' primarily used for in modern biotechnology?", incorrect_answers: ["Creating synthetic fuels", "Enhancing Wi-Fi signals", "Purifying drinking water"], correct_answer: "Gene editing" }
+                    ];
+                    
+                    const combined = pickBatch(upscQuestions, 'upsc', 10);
+                    
+                    // ALSO fetch from online API to meet the "unlimited question from online" requirement (UPSC usually hard/history)
+                    let onlineQuestions = [];
+                    try {
+                        const response = await fetch('https://opentdb.com/api.php?amount=10&category=23&type=multiple&difficulty=hard');
+                        const data = await response.json();
+                        if (data.results) {
+                            onlineQuestions = data.results.map(q => {
+                                const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                // Shuffle options
+                                for (let i = options.length - 1; i > 0; i--) {
+                                    const j = Math.floor(Math.random() * (i + 1));
+                                    [options[i], options[j]] = [options[j], options[i]];
+                                }
+                                return {
+                                    question: decodeHTML(q.question),
+                                    options: options,
+                                    correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                    translated: false
+                                };
+                            });
+                        }
+                    } catch (e) {
+                        console.error("Failed to fetch online UPSC questions", e);
+                    }
+
+                    // Push unseen online questions
+                    onlineQuestions.forEach(q => {
+                        if (!seenQuestions.has(q.question)) {
+                            seenQuestions.add(q.question);
+                            combined.push(q);
+                        }
+                    });
+                    
+                    // Shuffle the combined set
+                    for (let i = combined.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [combined[i], combined[j]] = [combined[j], combined[i]];
+                    }
+
+                    questionQueue.push(...combined);
+
+                } else if (categoryParam === 'tnpsc') {
+                    // Custom TNPSC Syllabus Questions divided by Group
+                    let tnpscQuestions = [];
+                    let localQuestions = [];
+                    let externalKey = null;
+
+                    if (subTopicParam === 'group1') {
+                        externalKey = 'tnpsc_group1';
+                        localQuestions = [
+                            // --- History, Culture & Indian National Movement (INM) ---
+                            { question: "Who was the founder of the Chola Empire?", incorrect_answers: ["Raja Raja Chola", "Rajendra Chola", "Karikala Chola"], correct_answer: "Vijayalaya Chola" },
+                            { question: "Which Chola king built the Brihadisvara Temple at Thanjavur?", incorrect_answers: ["Rajendra Chola I", "Karikala Chola", "Vijayalaya Chola"], correct_answer: "Raja Raja Chola I" },
+                            { question: "The Palayakkarar system was instituted by:", incorrect_answers: ["Marudu Pandiyars", "Tirumalai Nayak", "Krishnadevaraya"], correct_answer: "Viswanatha Nayak" },
+                            { question: "The Vedaranyam Salt Satyagraha was led by:", incorrect_answers: ["K. Kamaraj", "Subramaniya Siva", "T. S. S. Rajan"], correct_answer: "C. Rajagopalachari" },
+                            { question: "Who is known as 'Kappalottiya Thamizhan'?", incorrect_answers: ["Subramania Bharati", "Kamarajar", "Periyar E. V. Ramasamy"], correct_answer: "V. O. Chidambaram Pillai" },
+                            { question: "Who founded the 'Swatantra Party'?", incorrect_answers: ["Sathyamurthy", "Periyar", "Kamaraj"], correct_answer: "C. Rajagopalachari" },
+                            { question: "The first session of the Indian National Congress was held in 1885 at:", incorrect_answers: ["Calcutta", "Madras", "Surat"], correct_answer: "Bombay" },
+                            { question: "Who gave the slogan 'Do or Die' during the Quit India Movement?", incorrect_answers: ["Subhas Chandra Bose", "Jawaharlal Nehru", "Bal Gangadhar Tilak"], correct_answer: "Mahatma Gandhi" },
+                            
+                            // --- Indian Polity & Constitution ---
+                            { question: "Which article of the Indian Constitution deals with the abolition of untouchability?", incorrect_answers: ["Article 14", "Article 16", "Article 18"], correct_answer: "Article 17" },
+                            { question: "The fundamental duties were added to the Constitution by which Amendment Act?", incorrect_answers: ["44th Amendment", "86th Amendment", "73rd Amendment"], correct_answer: "42nd Amendment" },
+                            { question: "Who appoints the Chief Election Commissioner of India?", incorrect_answers: ["Prime Minister", "Chief Justice of India", "Parliament"], correct_answer: "President of India" },
+                            { question: "The Panchayati Raj system was constitutionally recognized by which Amendment?", incorrect_answers: ["72nd Amendment", "74th Amendment", "42nd Amendment"], correct_answer: "73rd Amendment" },
+                            { question: "Which schedule of the Indian Constitution deals with the allocation of seats in the Rajya Sabha?", incorrect_answers: ["Third Schedule", "Fifth Schedule", "Tenth Schedule"], correct_answer: "Fourth Schedule" },
+                            
+                            // --- Geography of India & Tamil Nadu ---
+                            { question: "What is the official bird of Tamil Nadu?", incorrect_answers: ["Peacock", "Indian Roller", "Great Hornbill"], correct_answer: "Emerald Dove" },
+                            { question: "What is the highest peak in the Western Ghats and South India?", incorrect_answers: ["Doddabetta", "Mukurthi", "Meesapulimala"], correct_answer: "Anaimudi" },
+                            { question: "Which river is known as the 'Lifeline of Tamil Nadu'?", incorrect_answers: ["Vaigai", "Palar", "Thamirabarani"], correct_answer: "Kaveri" },
+                            { question: "The soil predominantly found in the deltaic regions of Tamil Nadu is:", incorrect_answers: ["Red Soil", "Black Soil", "Laterite Soil"], correct_answer: "Alluvial Soil" },
+                            { question: "Tamil Nadu is the leading producer of which of the following renewable energy sources in India?", incorrect_answers: ["Solar Energy", "Biomass Energy", "Geothermal Energy"], correct_answer: "Wind Energy" },
+                            
+                            // --- Indian Economy & Development Administration ---
+                            { question: "In which year was the Reserve Bank of India (RBI) established?", incorrect_answers: ["1925", "1947", "1950"], correct_answer: "1935" },
+                            { question: "Which Five Year Plan in India focused heavily on rapid industrialization and basic industries?", incorrect_answers: ["First", "Third", "Fourth"], correct_answer: "Second" },
+                            { question: "The 'Mid-Day Meal Scheme' was successfully introduced in Tamil Nadu by:", incorrect_answers: ["C. N. Annadurai", "M. K. Karunanidhi", "J. Jayalalithaa"], correct_answer: "K. Kamaraj" },
+                            { question: "Tamil Nadu's 'Samathuvapuram' housing scheme aims to promote:", incorrect_answers: ["Urban development", "Free electricity", "Women empowerment"], correct_answer: "Social equality and eradication of caste discrimination" },
+                            { question: "What is the primary indicator used by the HDI (Human Development Index)?", incorrect_answers: ["GDP solely", "Number of hospitals", "Military strength"], correct_answer: "Life expectancy, Education, and Per capita income" },
+
+                            // --- General Science (Physics, Chemistry, Life Sciences) ---
+                            { question: "Which vitamin deficiency causes Scurvy?", incorrect_answers: ["Vitamin A", "Vitamin B12", "Vitamin D"], correct_answer: "Vitamin C" },
+                            { question: "What is the SI unit of electric current?", incorrect_answers: ["Volt", "Ohm", "Watt"], correct_answer: "Ampere" },
+                            { question: "The purest form of natural water is:", incorrect_answers: ["River water", "Groundwater", "Sea water"], correct_answer: "Rain water" },
+                            { question: "Which gland is often referred to as the 'master gland' of the human body?", incorrect_answers: ["Thyroid gland", "Adrenal gland", "Pancreas"], correct_answer: "Pituitary gland" },
+                            { question: "The phenomenon of light splitting into its component colors is called:", incorrect_answers: ["Reflection", "Refraction", "Diffraction"], correct_answer: "Dispersion" },
+
+                            // --- Unit 8 (History, Culture, Heritage of TN) & Literature ---
+                            { question: "Which classical language status was first given to a language in India?", incorrect_answers: ["Sanskrit", "Telugu", "Kannada"], correct_answer: "Tamil" },
+                            { question: "Who is the author of the ancient Tamil epic 'Manimekalai'?", incorrect_answers: ["Ilango Adigal", "Tiruvalluvar", "Kambar"], correct_answer: "Seethalai Sathanar" },
+                            { question: "In Sangam literature, the term 'Neydal' refers to which type of landscape?", incorrect_answers: ["Mountains", "Forests", "Agricultural plains"], correct_answer: "Coastal regions" },
+                            { question: "The 'Self-Respect Movement' aiming to dismantle the caste system was started by:", incorrect_answers: ["C. N. Annadurai", "Subramania Bharati", "Ayothidasar"], correct_answer: "Periyar E. V. Ramasamy" },
+                            { question: "Archaeological excavations at Keeladi primarily reveal the urban civilization of which ancient era?", incorrect_answers: ["Pallava era", "Chola era", "Nayaka era"], correct_answer: "Sangam era" },
+
+                            // --- Unit 9 (Development Administration in TN) ---
+                            { question: "When was the Madras State officially renamed as Tamil Nadu?", incorrect_answers: ["1956", "1967", "1972"], correct_answer: "1969" },
+                            { question: "Who introduced the Cradle Baby Scheme in Tamil Nadu to prevent female infanticide?", incorrect_answers: ["K. Kamaraj", "C. N. Annadurai", "M. K. Karunanidhi"], correct_answer: "J. Jayalalithaa" },
+                            { question: "Tamil Nadu holds the top rank in India in terms of producing which industrial resource?", incorrect_answers: ["Iron ore", "Coal", "Uranium"], correct_answer: "Yarn and Textile products" },
+                            { question: "The headquarters of TIDCO (Tamil Nadu Industrial Development Corporation) is located in:", incorrect_answers: ["Coimbatore", "Madurai", "Trichy"], correct_answer: "Chennai" },
+
+                            // --- Aptitude and Mental Ability (SSLC Standard) ---
+                            { question: "If the simple interest on a certain sum for 2 years at 5% per annum is ₹50, what is the principal?", incorrect_answers: ["₹400", "₹600", "₹1000"], correct_answer: "₹500" },
+                            { question: "Find the HCF (Highest Common Factor) of 36 and 84.", incorrect_answers: ["6", "18", "24"], correct_answer: "12" },
+                            { question: "If the perimeter of a square is 40 cm, what is its area?", incorrect_answers: ["80 sq cm", "160 sq cm", "400 sq cm"], correct_answer: "100 sq cm" },
+                            { question: "A train running at 72 km/hr crosses a pole in 10 seconds. What is the length of the train?", incorrect_answers: ["100 m", "150 m", "250 m"], correct_answer: "200 m" },
+                            { question: "In a certain code, 'ROSE' is written as 'TQUG'. How will 'BLUE' be written in that code?", incorrect_answers: ["DMWG", "CMVF", "DNWG"], correct_answer: "DNWG" },
+                            { question: "If A:B = 2:3 and B:C = 4:5, then find A:B:C.", incorrect_answers: ["2:7:5", "6:12:15", "8:15:20"], correct_answer: "8:12:15" },
+                            
+                            // --- Current Events / Contemporary Concepts ---
+                            { question: "Which Indian organization successfully launched the Chandrayaan-3 mission?", incorrect_answers: ["DRDO", "BARC", "HAL"], correct_answer: "ISRO" },
+                            { question: "Who is the Chief Minister of Tamil Nadu as of recent current affairs (2024)?", incorrect_answers: ["Edappadi K. Palaniswami", "O. Panneerselvam", "Udhayanidhi Stalin"], correct_answer: "M. K. Stalin" },
+                            { question: "The G20 Summit in 2023 was prominently hosted by which country?", incorrect_answers: ["Brazil", "Indonesia", "South Africa"], correct_answer: "India" },
+                            { question: "Which global index measures countries against 17 Sustainable Development Goals (SDGs)?", incorrect_answers: ["Global Hunger Index", "Human Development Index", "Ease of Doing Business"], correct_answer: "Sustainable Development Report Index" },
+                            { question: "Which state became the first in India to launch an exclusive 'Right to Health' bill?", incorrect_answers: ["Tamil Nadu", "Kerala", "Maharashtra"], correct_answer: "Rajasthan" }
+                        ];
+                    } else if (subTopicParam === 'group2') {
+                        externalKey = 'tnpsc_group2';
+                        localQuestions = [
+                            // --- General Tamil / Literature ---
+                            { question: "Who is the author of the Tamil epic 'Silappadikaram'?", incorrect_answers: ["Seethalai Sathanar", "Tiruvalluvar", "Kambar"], correct_answer: "Ilango Adigal" },
+                            { question: "Who was affectionately known as 'Bharathidasan'?", incorrect_answers: ["Ramalingam Pillai", "Subramania Bharati", "Kavimani Desigavinayagam"], correct_answer: "Subburathinam" },
+                            { question: "The prominent Tamil poet 'Avvaiyar' was a contemporary of which patron king?", incorrect_answers: ["Raja Raja Chola", "Karikala Chola", "Marudu Pandiyar"], correct_answer: "Adhiyaman" },
+                            { question: "Which ancient Tamil grammatical work is considered the oldest extant Tamil literature?", incorrect_answers: ["Tirukkural", "Manimekalai", "Purananuru"], correct_answer: "Tolkappiyam" },
+                            { question: "What is the total number of chapters (Adhikarams) in the Tirukkural?", incorrect_answers: ["100", "120", "150"], correct_answer: "133" },
+                            
+                            // --- General Science (Scientific Laws and Everyday Applications) ---
+                            { question: "Which law states that for every action, there is an equal and opposite reaction?", incorrect_answers: ["Boyle's Law", "Archimedes' Principle", "Ohm's Law"], correct_answer: "Newton's Third Law of Motion" },
+                            { question: "What is the chemical name for common baking soda?", incorrect_answers: ["Sodium Carbonate", "Calcium Carbonate", "Sodium Chloride"], correct_answer: "Sodium Bicarbonate" },
+                            { question: "Which lens is used to correct myopia (short-sightedness)?", incorrect_answers: ["Convex Lens", "Cylindrical Lens", "Bifocal Lens"], correct_answer: "Concave Lens" },
+                            { question: "The process by which plants make their own food using sunlight is called:", incorrect_answers: ["Respiration", "Transpiration", "Pollination"], correct_answer: "Photosynthesis" },
+                            { question: "Which instrument is used to measure the atmospheric pressure?", incorrect_answers: ["Thermometer", "Hygrometer", "Anemometer"], correct_answer: "Barometer" },
+                            
+                            // --- Geography of India & Tamil Nadu ---
+                            { question: "What is the highest peak in Tamil Nadu?", incorrect_answers: ["Anaimudi", "Velliangiri", "Kolli Hills"], correct_answer: "Doddabetta" },
+                            { question: "Which monsoon provides the maximum rainfall to Tamil Nadu?", incorrect_answers: ["South-West Monsoon", "Pre-Monsoon showers", "Western Disturbances"], correct_answer: "North-East Monsoon" },
+                            { question: "Which town in Tamil Nadu is famously known as the 'Manchester of South India'?", incorrect_answers: ["Tiruppur", "Salem", "Madurai"], correct_answer: "Coimbatore" },
+                            { question: "The longest river in peninsular India is:", incorrect_answers: ["Kaveri", "Krishna", "Narmada"], correct_answer: "Godavari" },
+                            { question: "Which is the largest naturally formed lake in India?", incorrect_answers: ["Dal Lake", "Chilika Lake", "Pulicat Lake"], correct_answer: "Wular Lake" },
+
+                            // --- History and Culture of India ---
+                            { question: "The famous 'Dancing Girl' bronze statue was found in which Indus Valley site?", incorrect_answers: ["Harappa", "Lothal", "Kalibangan"], correct_answer: "Mohenjo-Daro" },
+                            { question: "Who founded the Maurya Empire?", incorrect_answers: ["Ashoka", "Bindusara", "Bimbisara"], correct_answer: "Chandragupta Maurya" },
+                            { question: "The grand Brihadisvara Temple at Thanjavur was built by?", incorrect_answers: ["Rajendra Chola I", "Karikala Chola", "Narasimhavarman I"], correct_answer: "Raja Raja Chola I" },
+                            { question: "Who was the founder of the Maratha Empire?", incorrect_answers: ["Peshwa Baji Rao I", "Sambhaji", "Balaji Vishwanath"], correct_answer: "Chatrapati Shivaji" },
+                            { question: "The 'Quit India Movement' was launched in which year?", incorrect_answers: ["1930", "1940", "1945"], correct_answer: "1942" },
+                            
+                            // --- Indian Polity & Anti-Corruption ---
+                            { question: "Who is the Ex-officio Chairman of the Rajya Sabha?", incorrect_answers: ["President of India", "Prime Minister", "Chief Justice of India"], correct_answer: "Vice-President of India" },
+                            { question: "Which committee recommended the establishment of the Central Vigilance Commission (CVC)?", incorrect_answers: ["Kothari Commission", "Sarkaria Commission", "Mandal Commission"], correct_answer: "Santhanam Committee" },
+                            { question: "Under which Article can a National Emergency be declared in India?", incorrect_answers: ["Article 356", "Article 360", "Article 370"], correct_answer: "Article 352" },
+                            { question: "The Right to Information (RTI) Act was enacted in India in the year:", incorrect_answers: ["2000", "2002", "2010"], correct_answer: "2005" },
+                            { question: "Who acts as the anti-corruption ombudsman at the state level in India?", incorrect_answers: ["Lokpal", "Chief Minister", "Governor"], correct_answer: "Lokayukta" },
+                            
+                            // --- Unit 8 (History, Culture of Tamil Nadu) ---
+                            { question: "Who founded the 'Justice Party' in 1916?", incorrect_answers: ["Periyar", "C. N. Annadurai", "S. Satyamurti"], correct_answer: "Dr. C. Natesa Mudaliar, T. M. Nair, P. Theagaraya Chetty" },
+                            { question: "During the rule of which Pallava king was the famous Shore Temple at Mahabalipuram built?", incorrect_answers: ["Mahendravarman I", "Nandivarman II", "Simhavishnu"], correct_answer: "Narasimhavarman II (Rajasimha)" },
+                            { question: "The Vedaranyam Salt March heavily involved which famous freedom fighter from Tamil Nadu?", incorrect_answers: ["V. O. Chidambaram Pillai", "K. Kamaraj", "Subramaniya Siva"], correct_answer: "C. Rajagopalachari" },
+                            { question: "Which ancient Tamil kingdom was famous for its pearl fishery?", incorrect_answers: ["Chola", "Chera", "Pallava"], correct_answer: "Pandya" },
+                            
+                            // --- Unit 9 (Development Administration in TN) ---
+                            { question: "Which scheme in Tamil Nadu provides marriage assistance along with gold for a Thirumangalyam to poor women?", incorrect_answers: ["Cradle Baby Scheme", "Pudhumai Penn Scheme", "Muthulakshmi Reddy Maternity Scheme"], correct_answer: "Moovalur Ramamirtham Ammaiyar Memorial Marriage Assistance Scheme" },
+                            { question: "Tamil Nadu holds a premier position in the nation primarily in the production of:", incorrect_answers: ["Coal and Iron", "Gold and Silver", "Wheat and Jute"], correct_answer: "Automobiles and Auto Components" },
+                            { question: "The Koodankulam Nuclear Power Plant in TN was established in collaboration with which country?", incorrect_answers: ["USA", "France", "Japan"], correct_answer: "Russia" },
+                            { question: "Tamil Nadu has how many Lok Sabha constituencies?", incorrect_answers: ["35", "38", "40"], correct_answer: "39" },
+                            
+                            // --- Aptitude and Mental Ability (SSLC Standard) ---
+                            { question: "Simplify: 15% of 200 + 20% of 300.", incorrect_answers: ["70", "80", "100"], correct_answer: "90" },
+                            { question: "If the ratio of two numbers is 3:4 and their HCF is 4, what is their LCM?", incorrect_answers: ["12", "36", "24"], correct_answer: "48" },
+                            { question: "Calculate the Simple Interest on ₹1000 for 3 years at 10% per annum.", incorrect_answers: ["₹200", "₹400", "₹500"], correct_answer: "₹300" },
+                            { question: "A can do a piece of work in 10 days, and B can do it in 15 days. How long will they take if they work together?", incorrect_answers: ["5 days", "7.5 days", "8 days"], correct_answer: "6 days" },
+                            { question: "Find the next number in the series: 2, 6, 12, 20, 30, ...", incorrect_answers: ["36", "40", "44"], correct_answer: "42" },
+                            
+                            // --- Current Affairs / Events ---
+                            { question: "What is the new name of the Indian Parliament building inaugurated in 2023?", incorrect_answers: ["Bharat Bhavan", "Vidhan Sabha", "Lok Samiti"], correct_answer: "Samvidhan Sadan (Old building) / Sansad Bhavan (New)" },
+                            { question: "Who won the ICC Men's Cricket World Cup in 2023?", incorrect_answers: ["India", "England", "South Africa"], correct_answer: "Australia" },
+                            { question: "Which state hosts the famous Jallikattu bull-taming event?", incorrect_answers: ["Kerala", "Karnataka", "Andhra Pradesh"], correct_answer: "Tamil Nadu" },
+                            { question: "In 2023, India celebrated its successful G20 Presidency. What was the theme?", incorrect_answers: ["One World, One Family", "Global Unity Forever", "Sustainable Future"], correct_answer: "Vasudhaiva Kutumbakam (One Earth, One Family, One Future)" }
+                        ];
+                    } else if (subTopicParam === 'group3') {
+                        externalKey = 'tnpsc_group3';
+                        localQuestions = [
+                            // --- General Tamil (Grammar, Literature, Scholars) ---
+                            { question: "Which ancient Tamil grammatical work is considered the oldest extant Tamil literature?", incorrect_answers: ["Tirukkural", "Manimekalai", "Purananuru"], correct_answer: "Tolkappiyam" },
+                            { question: "How many Adhikarams (chapters) are there in the Porutpal (Wealth) section of the Thirukkural?", incorrect_answers: ["38", "25", "50"], correct_answer: "70" },
+                            { question: "The famous line 'Yadhum Oore Yavarum Kelir' (To us all towns are one, all men our kin) is from which Sangam text?", incorrect_answers: ["Akananuru", "Silappadikaram", "Kuruntokai"], correct_answer: "Purananuru" },
+                            { question: "Who was affectionately known as 'Kavimani'?", incorrect_answers: ["Subramania Bharati", "Ramalingam Pillai", "Bharathidasan"], correct_answer: "Desigavinayagam Pillai" },
+                            { question: "The autobiography of U. V. Swaminatha Iyer (the 'Grandfather of Tamil') is titled:", incorrect_answers: ["En Suya Sarithai", "Tamilin Perumai", "Varalaru"], correct_answer: "En Saritham" },
+                            
+                            // --- General Science (Physics, Chemistry, Life Sciences) ---
+                            { question: "What is the primary function of white blood cells in the human body?", incorrect_answers: ["Carrying oxygen", "Clotting blood", "Digesting food"], correct_answer: "Fighting infection and disease" },
+                            { question: "Which lens is used to correct hypermetropia (long-sightedness)?", incorrect_answers: ["Concave Lens", "Plano-concave Lens", "Cylindrical Lens"], correct_answer: "Convex Lens" },
+                            { question: "What is the chemical formula for baking soda?", incorrect_answers: ["Na2CO3", "NaCl", "NaOH"], correct_answer: "NaHCO3" },
+                            { question: "The process of converting a solid directly into a gas is called:", incorrect_answers: ["Condensation", "Evaporation", "Melting"], correct_answer: "Sublimation" },
+                            { question: "Which scientist discovered penicillin?", incorrect_answers: ["Marie Curie", "Louis Pasteur", "Gregor Mendel"], correct_answer: "Alexander Fleming" },
+                            
+                            // --- Geography of India & Tamil Nadu ---
+                            { question: "Which of the following passes connects Srinagar to Leh?", incorrect_answers: ["Rohtang Pass", "Nathu La Pass", "Shipki La Pass"], correct_answer: "Zoji La Pass" },
+                            { question: "The river Cauvery originates at Talakaveri located in which state?", incorrect_answers: ["Tamil Nadu", "Kerala", "Andhra Pradesh"], correct_answer: "Karnataka" },
+                            { question: "Which district in Tamil Nadu is famously known as the 'Granary of South India'?", incorrect_answers: ["Madurai", "Coimbatore", "Tirunelveli"], correct_answer: "Thanjavur" },
+                            { question: "What type of soil is predominantly found in the Deccan Plateau region?", incorrect_answers: ["Alluvial Soil", "Laterite Soil", "Red Soil"], correct_answer: "Black Soil" },
+                            { question: "The highest peak in the Nilgiri Hills is:", incorrect_answers: ["Anaimudi", "Agasthyamalai", "Velliangiri"], correct_answer: "Doddabetta" },
+
+                            // --- Indian Polity & Economy ---
+                            { question: "Under which Article of the Constitution can the President declare a Financial Emergency?", incorrect_answers: ["Article 352", "Article 356", "Article 368"], correct_answer: "Article 360" },
+                            { question: "The concept of 'Directive Principles of State Policy' was borrowed from the constitution of:", incorrect_answers: ["USA", "UK", "USSR"], correct_answer: "Ireland" },
+                            { question: "Who appoints the Chief Election Commissioner of India?", incorrect_answers: ["Prime Minister", "Chief Justice of India", "Parliament"], correct_answer: "President of India" },
+                            { question: "The Planning Commission of India was replaced in 2015 by which institution?", incorrect_answers: ["Finance Commission", "National Development Council", "Reserve Bank of India"], correct_answer: "NITI Aayog" },
+                            { question: "Which Five Year Plan is known as the 'Mahalanobis Plan'?", incorrect_answers: ["First", "Third", "Fourth"], correct_answer: "Second" },
+                            
+                            // --- Unit 8 (Tamil Nadu History, Culture & Heritage) ---
+                            { question: "The Dravidian Association was formed in the year:", incorrect_answers: ["1916", "1920", "1925"], correct_answer: "1912" },
+                            { question: "Who launched the 'Self-Respect Movement' in Tamil Nadu in 1925?", incorrect_answers: ["C. N. Annadurai", "M. K. Karunanidhi", "K. Kamaraj"], correct_answer: "E. V. Ramasamy (Periyar)" },
+                            { question: "The rock-cut temples at Mahabalipuram were built under the patronage of which dynasty?", incorrect_answers: ["Cholas", "Pandyas", "Cheras"], correct_answer: "Pallavas" },
+                            { question: "The Vedaranyam Salt Satyagraha in 1930 was organized by:", incorrect_answers: ["K. Kamaraj", "Subramaniya Siva", "T. S. S. Rajan"], correct_answer: "C. Rajagopalachari" },
+                            { question: "Keeladi, an important archaeological site belonging to the Sangam era, is located near which city?", incorrect_answers: ["Chennai", "Coimbatore", "Tiruchirappalli"], correct_answer: "Madurai" },
+
+                            // --- Unit 9 (Development Administration in TN) ---
+                            { question: "Tamil Nadu State's Human Development Index (HDI) performace generally ranks where compared to the national average?", incorrect_answers: ["Below National Average", "Equal to National Average", "Lowest in India"], correct_answer: "Significantly above National Average" },
+                            { question: "The 'Muthulakshmi Reddy Maternity Benefit Scheme' provides financial assistance primarily for:", incorrect_answers: ["Widow remarriage", "Girl child education", "Women entrepreneurs"], correct_answer: "Pregnant women and proper nutrition" },
+                            { question: "ELCOT (Electronics Corporation of Tamil Nadu) was established by the state government to promote:", incorrect_answers: ["Agriculture", "Textile industries", "Tourism"], correct_answer: "Information Technology and Electronics" },
+                            { question: "Which district is known as the 'Knitting City' of Tamil Nadu, leading in garment exports?", incorrect_answers: ["Salem", "Karur", "Erode"], correct_answer: "Tiruppur" },
+                            
+                            // --- Aptitude and Mental Ability (SSLC Standard) ---
+                            { question: "Simplify: 12 + 4 × 3 - 6 ÷ 2", incorrect_answers: ["21", "25", "18"], correct_answer: "21" },
+                            { question: "If 20% of a number is 50, what is the number?", incorrect_answers: ["100", "200", "300"], correct_answer: "250" },
+                            { question: "Find the HCF of 18, 24, and 36.", incorrect_answers: ["12", "8", "3"], correct_answer: "6" },
+                            { question: "LCM of two numbers is 120 and their HCF is 10. If one number is 30, what is the other number?", incorrect_answers: ["20", "50", "60"], correct_answer: "40" },
+                            { question: "Find the missing number in the series: 1, 4, 9, 16, 25, __", incorrect_answers: ["30", "35", "40"], correct_answer: "36" },
+                            { question: "A sum doubles itself in 8 years at simple interest. What is the rate of interest per annum?", incorrect_answers: ["8%", "10%", "15%"], correct_answer: "12.5%" },
+
+                            // --- Current Affairs & Previous Year Patterns ---
+                            { question: "What is the name of the comprehensive health insurance scheme launched by the Central Government?", incorrect_answers: ["Amma Maruthuva Thittam", "Kalaignar Kapittu Thittam", "Chief Minister's Insurance Scheme"], correct_answer: "Ayushman Bharat" },
+                            { question: "The ISRO headquarters is located in which city?", incorrect_answers: ["Chennai", "New Delhi", "Hyderabad"], correct_answer: "Bengaluru" },
+                            { question: "Which state became the first in India to implement a 'Right to Health' bill?", incorrect_answers: ["Kerala", "Tamil Nadu", "Maharashtra"], correct_answer: "Rajasthan" },
+                            { question: "The book 'Wings of Fire' is the autobiography of which prominent Indian figure?", incorrect_answers: ["Mahatma Gandhi", "Jawaharlal Nehru", "Sardar Patel"], correct_answer: "A. P. J. Abdul Kalam" }
+                        ];
+                    } else { // group4 or general
+                        externalKey = 'tnpsc_group4';
+                        localQuestions = [
+                            // --- General Tamil: Grammar (Ilakkanam) & Literature (Ilakkiyam) ---
+                            { question: "According to Tolkappiyam, how many types of 'Porul' (subject matter) are there in Tamil grammar?", incorrect_answers: ["3", "5", "4"], correct_answer: "2 (Aham and Puram)" },
+                            { question: "Which epic is known as 'Kudimakkal Kappiyam' (The Citizen's Epic)?", incorrect_answers: ["Seevaga Chintamani", "Valayapathi", "Kundalakesi"], correct_answer: "Silappadikaram" },
+                            { question: "Who wrote 'Panchali Sabatham'?", incorrect_answers: ["Bharathidasan", "Kavimani Desigavinayagam Pillai", "Namakkal Kavignar"], correct_answer: "Subramania Bharati" },
+                            { question: "How many couplets make up each chapter (Adhikaram) of the Tirukkural?", incorrect_answers: ["15", "12", "11"], correct_answer: "10" },
+                            { question: "In Tamil grammar, 'Yappu' refers to the study of:", incorrect_answers: ["Letters (Ezhuthu)", "Words (Sol)", "Meaning (Porul)"], correct_answer: "Prosody (Versification)" },
+                            
+                            // --- General Science (SSLC Standard) ---
+                            { question: "What is the powerhouse of the biological cell?", incorrect_answers: ["Nucleus", "Ribosome", "Golgi apparatus"], correct_answer: "Mitochondria" },
+                            { question: "The filament of an electric bulb is made of:", incorrect_answers: ["Copper", "Aluminum", "Iron"], correct_answer: "Tungsten" },
+                            { question: "Which gas is most abundant in the Earth's atmosphere?", incorrect_answers: ["Oxygen", "Carbon Dioxide", "Hydrogen"], correct_answer: "Nitrogen" },
+                            { question: "The process of zinc coating on iron to prevent rusting is called:", incorrect_answers: ["Alloying", "Smelting", "Vulcanization"], correct_answer: "Galvanization" },
+                            { question: "What is the human body's normal temperature in Celsius?", incorrect_answers: ["98.6°C", "35°C", "40°C"], correct_answer: "37°C" },
+
+                            // --- Geography (Earth, Universe, TN Resources) ---
+                            { question: "Which planet is known as the 'Red Planet'?", incorrect_answers: ["Venus", "Jupiter", "Saturn"], correct_answer: "Mars" },
+                            { question: "Where is the famous mangrove forest 'Pichavaram' located in Tamil Nadu?", incorrect_answers: ["Ramanathapuram", "Nagapattinam", "Thanjavur"], correct_answer: "Cuddalore" },
+                            { question: "Which district in Tamil Nadu is the largest producer of Lignite (brown coal)?", incorrect_answers: ["Salem", "Madurai", "Tirunelveli"], correct_answer: "Neyveli (Cuddalore)" },
+                            { question: "The state of Tamil Nadu is bordered by the Bay of Bengal to the:", incorrect_answers: ["West", "North", "South"], correct_answer: "East" },
+
+                            // --- History & Culture (Indus Valley + Dravidian Movement) ---
+                            { question: "The Great Bath, a prominent structure of the Indus Valley Civilization, was found at:", incorrect_answers: ["Harappa", "Lothal", "Kalibangan"], correct_answer: "Mohenjo-Daro" },
+                            { question: "Who founded the 'Justice Party' which later paved the way for the Dravidian movement?", incorrect_answers: ["E. V. Ramasamy", "C. N. Annadurai", "M. K. Karunanidhi"], correct_answer: "T.M. Nair, Dr. C. Natesa Mudaliar, P. Theagaraya Chetty" },
+                            { question: "Which Pallava King built the Kailasanatha Temple at Kanchipuram?", incorrect_answers: ["Mahendravarman I", "Simhavishnu", "Nandivarman II"], correct_answer: "Narasimhavarman II (Rajasimha)" },
+                            { question: "Who was known as 'Veerapandiya Kattabomman'?", incorrect_answers: ["A freedom fighter from Punjab", "A ruler of the Chola dynasty", "A Social Reformer"], correct_answer: "A Palayakkarar who rebelled against the British" },
+
+                            // --- Indian Polity & Economy (Constitution & Panchayat Raj) ---
+                            { question: "What is the minimum age required to contest in Panchayat elections?", incorrect_answers: ["18 years", "25 years", "30 years"], correct_answer: "21 years" },
+                            { question: "According to the Indian Constitution, Education falls under which list?", incorrect_answers: ["Union List", "State List", "Panchayat List"], correct_answer: "Concurrent List" },
+                            { question: "Who is the Constitutional Head of the State Government in India?", incorrect_answers: ["Chief Minister", "Chief Justice of High Court", "Prime Minister"], correct_answer: "Governor" },
+                            { question: "When did the Right to Information Act (RTI) come into force?", incorrect_answers: ["2000", "2008", "2010"], correct_answer: "2005" },
+                            { question: "The primary duty of a VAO (Village Administrative Officer) involves:", incorrect_answers: ["Traffic control", "Managing district funds", "Running the post office"], correct_answer: "Maintenance of village revenue records" },
+                            
+                            // --- Aptitude (Simplification, Percentage, HCF/LCM, Ratio, SI/CI, Area/Volume, Time & Work) ---
+                            { question: "Simplify according to BODMAS: 25 + 50 ÷ 5 × 2 - 10", incorrect_answers: ["20", "25", "45"], correct_answer: "35" },
+                            { question: "If the HCF of two numbers is 8 and their LCM is 144. If one number is 16, what is the other number?", incorrect_answers: ["36", "48", "64"], correct_answer: "72" },
+                            { question: "If 30% of x is 90, find the value of x.", incorrect_answers: ["200", "250", "400"], correct_answer: "300" },
+                            { question: "Two numbers are in the ratio 3:4. If the sum of the numbers is 63, find the larger number.", incorrect_answers: ["27", "32", "40"], correct_answer: "36" },
+                            { question: "A can do a piece of work in 20 days and B in 30 days. How long will they take to complete it working together?", incorrect_answers: ["10 days", "15 days", "25 days"], correct_answer: "12 days" },
+                            { question: "Find the Simple Interest on ₹5000 at 5% per annum for 4 years.", incorrect_answers: ["₹500", "₹800", "₹1200"], correct_answer: "₹1000" },
+                            { question: "What is the formula to find the area of a circle?", incorrect_answers: ["2πr", "πr", "2πr²"], correct_answer: "πr²" },
+                            { question: "If the side of a cube is 5 cm, what is its volume?", incorrect_answers: ["25 cm³", "100 cm³", "150 cm³"], correct_answer: "125 cm³" },
+
+                            // --- Current Events ---
+                            { question: "Which country hosted the 2024 Summer Olympics?", incorrect_answers: ["USA", "Japan", "Australia"], correct_answer: "France (Paris)" },
+                            { question: "Which scheme provides free breakfast to primary school students in government schools of Tamil Nadu?", incorrect_answers: ["Mid-Day Meal Scheme", "Amma Unavagam", "Pudhumai Penn Scheme"], correct_answer: "Chief Minister's Breakfast Scheme" },
+                            { question: "What is the name of India's first successful solar observatory mission launched by ISRO?", incorrect_answers: ["Chandrayaan-3", "Gaganyaan", "Mangalyaan"], correct_answer: "Aditya-L1" }
+                        ];
+                    }
+
+                    // Consolidated Merging and Processing
+                    let keysToUse = [];
+                    if (externalKey) keysToUse.push(externalKey);
+                    
+                    // Special case for group_2a
+                    if (subTopicParam === 'group2') {
+                        keysToUse.push('tnpsc_group_2a');
+                    }
+
+                    const combined = pickBatch(localQuestions, keysToUse, 10);
+                    questionQueue.push(...combined);
+                } else if (categoryParam === 'communication') {
+                    // Custom Communication Questions - Optimized for 36K+ questions
+                    let rawQuestions = [];
+                    if (externalDB && externalDB.communication) {
+                        rawQuestions = externalDB.communication;
+                    }
+
+                    const selectedRaw = [];
+                    const itemsToPushMax = Math.min(10, rawQuestions.length);
+                    
+                    if (itemsToPushMax > 0) {
+                        let attempts = 0;
+                        while(selectedRaw.length < itemsToPushMax && attempts < 150) {
+                            const randomIdx = Math.floor(Math.random() * rawQuestions.length);
+                            const q = rawQuestions[randomIdx];
+                            let questionText = q.question_en || q.question;
+                            if (questionText) {
+                                let decoded = decodeHTML(questionText);
+                                if (!seenQuestions.has(decoded)) {
+                                    selectedRaw.push(q);
+                                    // Temporarily add so we don't pick it repeatedly within this loop
+                                    seenQuestions.add(decoded);
+                                }
+                            }
+                            attempts++;
+                        }
+                        
+                        // Fallback logic if we cannot find unseen questions easily (meaning pool is exhausted)
+                        if (selectedRaw.length < itemsToPushMax) {
+                            seenQuestions.clear();
+                            saveSeen();
+                            for(let i = selectedRaw.length; i < itemsToPushMax; i++) {
+                                 const q = rawQuestions[Math.floor(Math.random() * rawQuestions.length)];
+                                 selectedRaw.push(q);
+                            }
+                        }
+                    }
+
+                    // Map JUST the selected 10 questions to the UI format
+                    const combined = mapQuestions(selectedRaw);
+                    for (let c of combined) {
+                        seenQuestions.add(c.question);
+                    }
+
+                    questionQueue.push(...combined);
+                } else if (categoryParam === 'rbi') {
+                    // Custom RRB (NTPC, Group D, ALP) Syllabus Questions
+                    const rrbQuestions = [
+                        // Indian Railways Specific Knowledge
+                        { question: "When and between which stations did the first passenger train run in India?", incorrect_answers: ["1854, Howrah to Hooghly", "1853, Chennai to Arcot", "1856, Delhi to Agra"], correct_answer: "1853, Bombay to Thane" },
+                        { question: "Who is known as the 'Father of Indian Railways'?", incorrect_answers: ["Lord Mountbatten", "Lord Curzon", "Lord Wellesley"], correct_answer: "Lord Dalhousie" },
+                        { question: "How many railway zones are currently there in the Indian Railways network?", incorrect_answers: ["16", "17", "18"], correct_answer: "19" },
+                        { question: "Which station has the longest railway platform in India and the world?", incorrect_answers: ["Gorakhpur Junction", "Kharagpur", "Howrah"], correct_answer: "Hubballi (Shree Siddharoodha Swamiji Railway Station)" },
+                        { question: "Where is the Indian Railway Staff College (National Academy of Indian Railways) located?", incorrect_answers: ["Pune", "Secunderabad", "Jamalpur"], correct_answer: "Vadodara" },
+                        { question: "What is the standard width of a Broad Gauge railway track in India?", incorrect_answers: ["1.000 meters", "1.435 meters", "0.762 meters"], correct_answer: "1.676 meters" },
+                        { question: "Who was the first Railway Minister of independent India?", incorrect_answers: ["Lal Bahadur Shastri", "Babu Jagjivan Ram", "Sardar Vallabhbhai Patel"], correct_answer: "John Mathai" },
+                        { question: "Where is the headquarters of the South Central Railway zone located?", incorrect_answers: ["Chennai", "Visakhapatnam", "Hubballi"], correct_answer: "Secunderabad" },
+                        { question: "The 'Integral Coach Factory' (ICF), where train coaches are manufactured, is located in:", incorrect_answers: ["Kapurthala", "Raebareli", "Varanasi"], correct_answer: "Perambur (Chennai)" },
+                        { question: "Which is the largest railway junction in India, with the maximum number of routes radiating from it?", incorrect_answers: ["New Delhi", "Howrah", "Vijayawada"], correct_answer: "Mathura Junction" },
+
+                        // Mathematics
+                        { question: "What is the value of 15 ÷ 3 × 5 - 10 + 2?", incorrect_answers: ["10", "15", "5"], correct_answer: "17" },
+                        { question: "If A can do a piece of work in 10 days and B in 15 days, in how many days can they complete it working together?", incorrect_answers: ["5 days", "12 days", "8 days"], correct_answer: "6 days" },
+                        { question: "A person buys an article for ₹500 and sells it for ₹600. What is his profit percentage?", incorrect_answers: ["15%", "25%", "10%"], correct_answer: "20%" },
+                        { question: "If x + y = 10 and x - y = 4, what is the value of x?", incorrect_answers: ["6", "8", "5"], correct_answer: "7" },
+                        { question: "What is the least common multiple (LCM) of 12, 15, and 20?", incorrect_answers: ["120", "30", "45"], correct_answer: "60" },
+
+                        // General Intelligence & Reasoning
+                        { question: "If 'MIND' is coded as 'KGLB', then how will 'DIAGRAM' be coded?", incorrect_answers: ["BGYEPZL", "AFXDOXJ", "CHZESAN"], correct_answer: "BGYEPYK" },
+                        { question: "Statement: All cats are dogs. Some dogs are birds. Conclusion: I. Some cats are birds. II. Some birds are dogs.", incorrect_answers: ["Only I follows", "Both I and II follow", "Neither I nor II follows"], correct_answer: "Only II follows" },
+                        { question: "Pointing to a photograph, a man said, 'I have no brother or sister but that man\\'s father is my father\\'s son.' Whose photograph was it?", incorrect_answers: ["His own", "His father's", "His uncle's"], correct_answer: "His son's" },
+                        { question: "What comes next in the series: 2, 6, 12, 20, 30, ... ?", incorrect_answers: ["40", "44", "38"], correct_answer: "42" },
+                        { question: "In a family, A is the brother of B. C is the father of A. D is the brother of E, and E is the daughter of B. Who is the uncle of D?", incorrect_answers: ["B", "C", "E"], correct_answer: "A" },
+
+                        // General Science (Physics, Chemistry, Biology)
+                        { question: "What is the SI unit of electric current?", incorrect_answers: ["Volt", "Watt", "Ohm"], correct_answer: "Ampere" },
+                        { question: "Which chemical element has the symbol 'Fe'?", incorrect_answers: ["Fluorine", "Francium", "Flerovium"], correct_answer: "Iron" },
+                        { question: "What is the pH value of pure water at room temperature?", incorrect_answers: ["5", "8", "6"], correct_answer: "7" },
+                        { question: "Which blood vessels carry oxygenated blood away from the heart?", incorrect_answers: ["Veins", "Capillaries", "Vena Cava"], correct_answer: "Arteries" },
+                        { question: "The power of a lens is measured in which unit?", incorrect_answers: ["Meter", "Watt", "Joule"], correct_answer: "Diopter" },
+
+                        // General Awareness (History, Polity, Current Affairs, etc.)
+                        { question: "Who is known as the 'Father of the Indian Constitution'?", incorrect_answers: ["Mahatma Gandhi", "Jawaharlal Nehru", "Sardar Vallabhbhai Patel"], correct_answer: "Dr. B.R. Ambedkar" },
+                        { question: "Which river is famously known as the 'Sorrow of Bihar'?", incorrect_answers: ["Ganga", "Brahmaputra", "Yamuna"], correct_answer: "Kosi" },
+                        { question: "Which Article of the Indian Constitution deals with the Right to Equality?", incorrect_answers: ["Article 19", "Article 21", "Article 32"], correct_answer: "Article 14" },
+                        { question: "Where is the headquarters of the Indian Space Research Organisation (ISRO) located?", incorrect_answers: ["New Delhi", "Mumbai", "Hyderabad"], correct_answer: "Bengaluru" },
+
+                        // Technical / Engineering Basics (ALP/JE Syllabus)
+                        { question: "What is the SI unit of force?", incorrect_answers: ["Joule", "Watt", "Pascal"], correct_answer: "Newton" },
+                        { question: "Density is mathematically defined as:", incorrect_answers: ["Volume per unit mass", "Force per unit area", "Mass times acceleration"], correct_answer: "Mass per unit volume" },
+                        { question: "Which instrument is used to measure atmospheric pressure?", incorrect_answers: ["Thermometer", "Hygrometer", "Anemometer"], correct_answer: "Barometer" },
+                        { question: "Calculate the work done if a constant force of 10 N moves an object 5 meters in the direction of the force.", incorrect_answers: ["15 Joules", "2 Joules", "100 Joules"], correct_answer: "50 Joules" },
+                        { question: "1 Horsepower (hp) in the imperial system is approximately equal to how many watts?", incorrect_answers: ["1000 Watts", "500 Watts", "250 Watts"], correct_answer: "746 Watts" }
+                    ];
+                    
+                    const combined = pickBatch(rrbQuestions, 'rrb', 10);
+                    questionQueue.push(...combined);
+                } else {
+                    // Fetch for GK from OpenTDB
+                    const gkCatIdParams = urlParams.get('gkCatId');
+                    const subTopicParam = urlParams.get('topic');
+                    
+                    // If History is selected, use custom questions instead of the API
+                    if (subTopicParam === 'history' || gkCatIdParams === '23') {
+                        const historyQuestions = [
+                            // Freedom Fighters
+                            {
+                                question: "Who gave the famous slogan 'Give me blood and I will give you freedom'?",
+                                incorrect_answers: ["Mahatma Gandhi", "Bhagat Singh", "Jawaharlal Nehru"],
+                                correct_answer: "Subhas Chandra Bose"
+                            },
+                            {
+                                question: "Which freedom fighter is affectionately known as the 'Iron Man of India'?",
+                                incorrect_answers: ["Bal Gangadhar Tilak", "Lala Lajpat Rai", "Bipin Chandra Pal"],
+                                correct_answer: "Sardar Vallabhbhai Patel"
+                            },
+                            {
+                                question: "Who was the founder of the Indian National Army (Azad Hind Fauj)?",
+                                incorrect_answers: ["Bhagat Singh", "Chandrashekhar Azad", "Mahatma Gandhi"],
+                                correct_answer: "Subhas Chandra Bose"
+                            },
+                            {
+                                question: "Which revolutionary threw a bomb in the Central Legislative Assembly in New Delhi in 1929?",
+                                incorrect_answers: ["Mangal Pandey", "Sukhdev", "Rajguru"],
+                                correct_answer: "Bhagat Singh"
+                            },
+                            {
+                                question: "Who led the Salt March (Dandi March) in 1930?",
+                                incorrect_answers: ["Jawaharlal Nehru", "Dr. B.R. Ambedkar", "Sarojini Naidu"],
+                                correct_answer: "Mahatma Gandhi"
+                            },
+                            // Ancient Civilizations
+                            {
+                                question: "Which ancient civilization built the Machu Picchu?",
+                                incorrect_answers: ["Maya", "Aztecs", "Olmec"],
+                                correct_answer: "Inca"
+                            },
+                            {
+                                question: "The Great Bath is one of the best-known structures among the ruins of which ancient civilization?",
+                                incorrect_answers: ["Ancient Egypt", "Mesopotamia", "Ancient China"],
+                                correct_answer: "Indus Valley Civilization"
+                            },
+                            {
+                                question: "Which ancient civilization is credited with inventing the wheel and early forms of writing (Cuneiform)?",
+                                incorrect_answers: ["Ancient Egypt", "Ancient Greece", "Indus Valley Civilization"],
+                                correct_answer: "Mesopotamia (Sumerians)"
+                            },
+                            {
+                                question: "Which ancient Egyptian pharaoh's tomb was discovered nearly intact in 1922?",
+                                incorrect_answers: ["Ramses II", "Cleopatra VII", "Khufu"],
+                                correct_answer: "Tutankhamun"
+                            },
+                            {
+                                question: "The city of Sparta belonged to which ancient civilization?",
+                                incorrect_answers: ["Ancient Rome", "Persian Empire", "Macedonia"],
+                                correct_answer: "Ancient Greece"
+                            },
+                            // Major Wars
+                            {
+                                question: "Which war was fought between the North and South regions of the United States from 1861 to 1865?",
+                                incorrect_answers: ["American Revolutionary War", "The War of 1812", "World War I"],
+                                correct_answer: "American Civil War"
+                            },
+                            {
+                                question: "What event officially triggered the beginning of World War I?",
+                                incorrect_answers: ["The bombing of Pearl Harbor", "The invasion of Poland", "The sinking of the Lusitania"],
+                                correct_answer: "The assassination of Archduke Franz Ferdinand"
+                            },
+                            {
+                                question: "Which two nations were primarily involved in the Cold War?",
+                                incorrect_answers: ["Germany and France", "Great Britain and Argentina", "China and Japan"],
+                                correct_answer: "United States and Soviet Union"
+                            },
+                            {
+                                question: "The Battle of Waterloo (1815) ended the rule of which historical figure?",
+                                incorrect_answers: ["Julius Caesar", "Alexander the Great", "King Louis XVI"],
+                                correct_answer: "Napoleon Bonaparte"
+                            },
+                            {
+                                question: "Which war ended with the signing of the Treaty of Versailles in 1919?",
+                                incorrect_answers: ["World War II", "The Franco-Prussian War", "The Crimean War"],
+                                correct_answer: "World War I"
+                            },
+                            // Key Historical Events
+                            {
+                                question: "In what year did the Titanic sink in the Atlantic Ocean on its maiden voyage?",
+                                incorrect_answers: ["1905", "1915", "1922"],
+                                correct_answer: "1912"
+                            },
+                            {
+                                question: "Which historical document was signed in 1215, significantly limiting the powers of the King of England?",
+                                incorrect_answers: ["The English Bill of Rights", "The Declaration of Independence", "The Constitution"],
+                                correct_answer: "The Magna Carta"
+                            },
+                            {
+                                question: "Who was the first person to walk on the moon in 1969?",
+                                incorrect_answers: ["Buzz Aldrin", "Yuri Gagarin", "John Glenn"],
+                                correct_answer: "Neil Armstrong"
+                            },
+                            {
+                                question: "The fall of which wall in 1989 symbolized the end of the Cold War?",
+                                incorrect_answers: ["The Great Wall of China", "The Wall of Jericho", "The Western Wall"],
+                                correct_answer: "The Berlin Wall"
+                            },
+                            {
+                                question: "In which year did India gain independence from British rule?",
+                                incorrect_answers: ["1945", "1948", "1950"],
+                                correct_answer: "1947"
+                            }
+                        ];
+
+                        const combined = pickBatch(historyQuestions, 'gk_history', 10);
+                        questionQueue.push(...combined);
+                        
+                    } else if (subTopicParam === 'geography' || gkCatIdParams === '22') {
+                        // Custom Geography Questions focusing on specific subtopics
+                        const geographyQuestions = [
+                            // Capitals
+                            { question: "What is the capital city of Australia?", incorrect_answers: ["Sydney", "Melbourne", "Brisbane"], correct_answer: "Canberra" },
+                            { question: "Which city is the capital of Canada?", incorrect_answers: ["Toronto", "Vancouver", "Montreal"], correct_answer: "Ottawa" },
+                            { question: "Tokyo is the capital of which country?", incorrect_answers: ["China", "South Korea", "Thailand"], correct_answer: "Japan" },
+                            { question: "What is the capital of Brazil?", incorrect_answers: ["Rio de Janeiro", "São Paulo", "Salvador"], correct_answer: "Brasília" },
+                            { question: "Which city serves as the capital of Argentina?", incorrect_answers: ["Santiago", "Lima", "Bogota"], correct_answer: "Buenos Aires" },
+                            { question: "Wellington is the capital of which island nation?", incorrect_answers: ["Fiji", "Papua New Guinea", "Samoa"], correct_answer: "New Zealand" },
+                            { question: "What is the capital of Egypt?", incorrect_answers: ["Alexandria", "Giza", "Luxor"], correct_answer: "Cairo" },
+                            { question: "What is the capital of Spain?", incorrect_answers: ["Barcelona", "Seville", "Valencia"], correct_answer: "Madrid" },
+                            
+                            // Countries
+                            { question: "Which country has the largest land area in the world?", incorrect_answers: ["Canada", "China", "United States"], correct_answer: "Russia" },
+                            { question: "Which country is famously known as the Land of the Rising Sun?", incorrect_answers: ["China", "Thailand", "Vietnam"], correct_answer: "Japan" },
+                            { question: "In which country is the famous Machu Picchu located?", incorrect_answers: ["Chile", "Ecuador", "Colombia"], correct_answer: "Peru" },
+                            { question: "Which country is known for the map shape resembling a boot?", incorrect_answers: ["Greece", "Spain", "Portugal"], correct_answer: "Italy" },
+                            { question: "Which is the smallest country in the world by land area?", incorrect_answers: ["Monaco", "Nauru", "San Marino"], correct_answer: "Vatican City" },
+                            { question: "Which country shares the longest border with the United States?", incorrect_answers: ["Mexico", "Cuba", "Russia"], correct_answer: "Canada" },
+                            { question: "Which African country is known as the Rainbow Nation?", incorrect_answers: ["Kenya", "Nigeria", "Egypt"], correct_answer: "South Africa" },
+                            
+                            // Continents
+                            { question: "Which is the largest continent by area and population?", incorrect_answers: ["Africa", "North America", "Europe"], correct_answer: "Asia" },
+                            { question: "Which continent is known as the 'Dark Continent'?", incorrect_answers: ["South America", "Antarctica", "Asia"], correct_answer: "Africa" },
+                            { question: "Which is the smallest continent in the world?", incorrect_answers: ["Europe", "Antarctica", "South America"], correct_answer: "Australia" },
+                            { question: "Which continent contains no native human population and is covered mostly in ice?", incorrect_answers: ["Arctic", "Greenland", "Europe"], correct_answer: "Antarctica" },
+                            { question: "The Sahara Desert spans across the northern part of which continent?", incorrect_answers: ["Asia", "Australia", "North America"], correct_answer: "Africa" },
+                            { question: "Which continent has the most countries?", incorrect_answers: ["Asia", "Europe", "South America"], correct_answer: "Africa" },
+                            
+                            // Oceans
+                            { question: "Which is the largest and deepest ocean on Earth?", incorrect_answers: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean"], correct_answer: "Pacific Ocean" },
+                            { question: "Which ocean is located entirely in the Northern Hemisphere?", incorrect_answers: ["Indian Ocean", "Pacific Ocean", "Southern Ocean"], correct_answer: "Arctic Ocean" },
+                            { question: "Which ocean separates North America from Europe?", incorrect_answers: ["Pacific Ocean", "Indian Ocean", "Arctic Ocean"], correct_answer: "Atlantic Ocean" },
+                            { question: "Which ocean lies directly south of the Asian subcontinent?", incorrect_answers: ["Pacific Ocean", "Atlantic Ocean", "Southern Ocean"], correct_answer: "Indian Ocean" },
+                            { question: "The deepest point on Earth, the Mariana Trench, is located in which ocean?", incorrect_answers: ["Atlantic Ocean", "Indian Ocean", "Southern Ocean"], correct_answer: "Pacific Ocean" },
+                            
+                            // Rivers
+                            { question: "Which river is generally considered the longest in the world?", incorrect_answers: ["Amazon River", "Yangtze River", "Mississippi River"], correct_answer: "Nile River" },
+                            { question: "Which river has the largest drainage basin and water volume in the world?", incorrect_answers: ["Nile River", "Congo River", "Yangtze River"], correct_answer: "Amazon River" },
+                            { question: "The Ganges River is considered highly sacred in which country?", incorrect_answers: ["Nepal", "Bangladesh", "Pakistan"], correct_answer: "India" },
+                            { question: "Which is the longest river in Asia?", incorrect_answers: ["Yellow River", "Mekong River", "Ganges River"], correct_answer: "Yangtze River" },
+                            { question: "Through which European capital city does the River Thames flow?", incorrect_answers: ["Paris", "Berlin", "Rome"], correct_answer: "London" },
+                            { question: "The Grand Canyon was carved by which major US river?", incorrect_answers: ["Mississippi River", "Missouri River", "Rio Grande"], correct_answer: "Colorado River" },
+                            
+                            // Famous Monuments
+                            { question: "Where is the Eiffel Tower located?", incorrect_answers: ["London", "Rome", "Berlin"], correct_answer: "Paris" },
+                            { question: "The Colosseum, a historic amphitheater, is situated in which city?", incorrect_answers: ["Athens", "Istanbul", "Alexandria"], correct_answer: "Rome" },
+                            { question: "Which famous monument is located in Agra, India?", incorrect_answers: ["Qutub Minar", "Red Fort", "Hawa Mahal"], correct_answer: "Taj Mahal" },
+                            { question: "Which iconic statue stands in New York Harbor?", incorrect_answers: ["Christ the Redeemer", "Mount Rushmore", "The Great Sphinx"], correct_answer: "Statue of Liberty" },
+                            { question: "The Great Wall of China was primarily built to protect against invasions from:", incorrect_answers: ["Japan", "India", "Korea"], correct_answer: "Mongolian nomadic tribes" },
+                            { question: "The ancient monument Stonehenge is located in which country?", incorrect_answers: ["Ireland", "Scotland", "Wales"], correct_answer: "England" },
+                            { question: "The Acropolis, crowned by the Parthenon, overlooks which historical city?", incorrect_answers: ["Rome", "Jerusalem", "Damascus"], correct_answer: "Athens" },
+                            { question: "Mount Rushmore, featuring the faces of 4 US Presidents, is located in which state?", incorrect_answers: ["Colorado", "Wyoming", "Montana"], correct_answer: "South Dakota" }
+                        ];
+
+                        const combined = pickBatch(geographyQuestions, 'gk_geography', 10);
+                        questionQueue.push(...combined);
+                        
+                    } else if (subTopicParam === 'science' || gkCatIdParams === '17') {
+                        // Custom Science & Tech Questions focusing on Specific Targets
+                        const scienceQuestions = [
+                            // Biology (Human Body)
+                            { question: "What is the largest organ in the human body?", incorrect_answers: ["Heart", "Liver", "Brain"], correct_answer: "Skin" },
+                            { question: "Which blood cells are responsible for fighting infections?", incorrect_answers: ["Red blood cells", "Platelets", "Plasma"], correct_answer: "White blood cells" },
+                            { question: "What is the main function of the human heart?", incorrect_answers: ["To digest food", "To filter blood", "To control thoughts"], correct_answer: "To pump blood" },
+                            { question: "How many bones are there in the adult human body?", incorrect_answers: ["200", "212", "196"], correct_answer: "206" },
+                            { question: "Which organ is primarily responsible for filtering toxins from the blood?", incorrect_answers: ["Kidneys", "Lungs", "Stomach"], correct_answer: "Liver" },
+                            { question: "What part of the brain controls balance and coordination?", incorrect_answers: ["Cerebrum", "Medulla oblongata", "Hypothalamus"], correct_answer: "Cerebellum" },
+                            { question: "Which vitamin is heavily produced in the human body when exposed to sunlight?", incorrect_answers: ["Vitamin A", "Vitamin C", "Vitamin B12"], correct_answer: "Vitamin D" },
+                            { question: "What is the hardest substance in the human body?", incorrect_answers: ["Bone", "Dentin", "Cartilage"], correct_answer: "Tooth Enamel" },
+                            
+                            // Chemistry (Elements, Formulas)
+                            { question: "What is the chemical symbol for Gold?", incorrect_answers: ["Ag", "Go", "Gd"], correct_answer: "Au" },
+                            { question: "What is the common name for sodium chloride (NaCl)?", incorrect_answers: ["Baking Soda", "Sugar", "Bleach"], correct_answer: "Table Salt" },
+                            { question: "Which gas is most abundant in the Earth's atmosphere?", incorrect_answers: ["Oxygen", "Carbon Dioxide", "Hydrogen"], correct_answer: "Nitrogen" },
+                            { question: "What is the chemical formula for water?", incorrect_answers: ["CO2", "H2O2", "O2"], correct_answer: "H2O" },
+                            { question: "At room temperature, which of these elements is a liquid?", incorrect_answers: ["Iron", "Lead", "Sodium"], correct_answer: "Mercury" },
+                            { question: "What is the lightest element on the periodic table?", incorrect_answers: ["Oxygen", "Helium", "Carbon"], correct_answer: "Hydrogen" },
+                            { question: "What element does 'O' stand for on the periodic table?", incorrect_answers: ["Osmium", "Ozone", "Opal"], correct_answer: "Oxygen" },
+                            { question: "Which subatomic particles are found in the nucleus of an atom?", incorrect_answers: ["Electrons only", "Protons and electrons", "Neutrons and electrons"], correct_answer: "Protons and neutrons" },
+                            
+                            // Physics (Laws of Motion)
+                            { question: "Who formulated the three laws of motion?", incorrect_answers: ["Albert Einstein", "Galileo Galilei", "Nikola Tesla"], correct_answer: "Isaac Newton" },
+                            { question: "Newton's First Law of Motion is also known as the Law of:", incorrect_answers: ["Gravity", "Thermodynamics", "Relativity"], correct_answer: "Inertia" },
+                            { question: "According to Newton's Second Law, Force is equal to:", incorrect_answers: ["Mass divided by Acceleration", "Velocity squared", "Work divided by Time"], correct_answer: "Mass times Acceleration (F=ma)" },
+                            { question: "Newton's Third Law states that for every action, there is an equal and opposite:", incorrect_answers: ["Force", "Momentum", "Friction"], correct_answer: "Reaction" },
+                            { question: "What is the measure of the force of gravity acting on an object's mass?", incorrect_answers: ["Density", "Volume", "Inertia"], correct_answer: "Weight" },
+                            { question: "What force opposes the sliding motion of two surfaces that are touching each other?", incorrect_answers: ["Gravity", "Magnetism", "Tension"], correct_answer: "Friction" },
+                            { question: "In physics, what is the rate of change of velocity called?", incorrect_answers: ["Speed", "Displacement", "Momentum"], correct_answer: "Acceleration" },
+                            
+                            // Inventions
+                            { question: "Who is credited with inventing the telephone?", incorrect_answers: ["Thomas Edison", "Guglielmo Marconi", "Nikola Tesla"], correct_answer: "Alexander Graham Bell" },
+                            { question: "Who invented the first successful airplane?", incorrect_answers: ["Henry Ford", "The Montgolfier Brothers", "Leonardo da Vinci"], correct_answer: "The Wright Brothers" },
+                            { question: "Who is widely credited with inventing the modern light bulb?", incorrect_answers: ["Benjamin Franklin", "Michael Faraday", "James Watt"], correct_answer: "Thomas Edison" },
+                            { question: "Which scientist discovered penicillin?", incorrect_answers: ["Marie Curie", "Louis Pasteur", "Jonas Salk"], correct_answer: "Alexander Fleming" },
+                            { question: "Who developed the theory of general relativity?", incorrect_answers: ["Niels Bohr", "Stephen Hawking", "Max Planck"], correct_answer: "Albert Einstein" },
+                            { question: "Who is recognized as the inventor of the World Wide Web (WWW)?", incorrect_answers: ["Steve Jobs", "Bill Gates", "Mark Zuckerberg"], correct_answer: "Tim Berners-Lee" },
+                            { question: "Which inventor formulated the alternating current (AC) electrical system?", incorrect_answers: ["Thomas Edison", "Alessandro Volta", "James Clerk Maxwell"], correct_answer: "Nikola Tesla" }
+                        ];
+                        
+                        const combined = pickBatch(scienceQuestions, ['gk_science', 'gk_science_tech'], 10);
+                        questionQueue.push(...combined);
+                        
+                    } else if (subTopicParam === 'sports' || gkCatIdParams === '21') {
+                        // Custom Sports Questions focusing on Specific Targets
+                        const sportsQuestions = [
+                            // National sports
+                            { question: "What is the national sport of Japan?", incorrect_answers: ["Judo", "Karate", "Kendo"], correct_answer: "Sumo Wrestling" },
+                            { question: "Which of these countries has Cricket as its de facto national sport?", incorrect_answers: ["India", "New Zealand", "South Africa"], correct_answer: "Australia" },
+                            { question: "What is the de facto national sport of India?", incorrect_answers: ["Cricket", "Kabaddi", "Football"], correct_answer: "Field Hockey" },
+                            { question: "Taekwondo is the national sport of which country?", incorrect_answers: ["Japan", "China", "Thailand"], correct_answer: "South Korea" },
+                            { question: "What is the national summer sport of Canada?", incorrect_answers: ["Ice Hockey", "Baseball", "Basketball"], correct_answer: "Lacrosse" },
+                            { question: "Which country has Archery as its national sport?", incorrect_answers: ["Mongolia", "Nepal", "Japan"], correct_answer: "Bhutan" },
+                            
+                            // Cups/Trophies
+                            { question: "The Thomas Cup is associated with which sport?", incorrect_answers: ["Tennis", "Table Tennis", "Golf"], correct_answer: "Badminton" },
+                            { question: "The FIFA World Cup is the most prestigious tournament in which sport?", incorrect_answers: ["Rugby", "Cricket", "Basketball"], correct_answer: "Football (Soccer)" },
+                            { question: "The Ryder Cup is a famous trophy awarded in which sport?", incorrect_answers: ["Tennis", "Polo", "Sailing"], correct_answer: "Golf" },
+                            { question: "The Davis Cup is an international team event in which sport?", incorrect_answers: ["Badminton", "Cricket", "Hockey"], correct_answer: "Tennis" },
+                            { question: "Which sport's championship team is awarded the Stanley Cup?", incorrect_answers: ["Football", "Rugby", "Baseball"], correct_answer: "Ice Hockey" },
+                            { question: "The Ashes is a legendary Test cricket series played between which two nations?", incorrect_answers: ["India and Pakistan", "Australia and South Africa", "England and West Indies"], correct_answer: "England and Australia" },
+                            { question: "The Webb Ellis Cup is awarded to the winner of the World Cup in which sport?", incorrect_answers: ["Cricket", "Football", "Hockey"], correct_answer: "Rugby" },
+                            
+                            // Winners / Famous Athletes
+                            { question: "Who holds the record for the most Olympic gold medals of all time?", incorrect_answers: ["Usain Bolt", "Carl Lewis", "Mark Spitz"], correct_answer: "Michael Phelps" },
+                            { question: "Which male tennis player has won the most Grand Slam singles titles as of 2023?", incorrect_answers: ["Roger Federer", "Rafael Nadal", "Pete Sampras"], correct_answer: "Novak Djokovic" },
+                            { question: "Who is the only cricketer to score 100 international centuries?", incorrect_answers: ["Ricky Ponting", "Virat Kohli", "Jacques Kallis"], correct_answer: "Sachin Tendulkar" },
+                            { question: "Which country has won the most FIFA World Cup titles in men's football?", incorrect_answers: ["Germany", "Italy", "Argentina"], correct_answer: "Brazil" },
+                            { question: "Who is known as 'Lightning Bolt' and holds world records for the 100m and 200m sprints?", incorrect_answers: ["Tyson Gay", "Yohan Blake", "Justin Gatlin"], correct_answer: "Usain Bolt" },
+                            { question: "Serena Williams is considered one of the greatest athletes of all time in which sport?", incorrect_answers: ["Golf", "Athletics", "Gymnastics"], correct_answer: "Tennis" },
+                            { question: "Muhammad Ali was a legendary figure in which sport?", incorrect_answers: ["Wrestling", "Mixed Martial Arts", "Weightlifting"], correct_answer: "Boxing" },
+                            { question: "Lionel Messi spent the majority of his professional club career playing for which team?", incorrect_answers: ["Real Madrid", "Paris Saint-Germain", "Manchester United"], correct_answer: "Barcelona" },
+                            { question: "Which female gymnast scored the first perfect 10 in Olympic history?", incorrect_answers: ["Simone Biles", "Mary Lou Retton", "Olga Korbut"], correct_answer: "Nadia Comăneci" }
+                        ];
+
+                        const combined = pickBatch(sportsQuestions, 'gk_sports', 10);
+                        
+                        // Fetch from OpenTDB for unlimited questions
+                        let onlineQuestions = [];
+                        try {
+                            const response = await fetch('https://opentdb.com/api.php?amount=10&category=21&type=multiple');
+                            const data = await response.json();
+                            if (data.results) {
+                                onlineQuestions = data.results.map(q => {
+                                    const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                    for (let i = options.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [options[i], options[j]] = [options[j], options[i]];
+                                    }
+                                    return {
+                                        question: decodeHTML(q.question),
+                                        options: options,
+                                        correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                        translated: false
+                                    };
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch online sports questions", e);
+                        }
+
+                        // Push unseen online questions
+                        onlineQuestions.forEach(q => {
+                            if (!seenQuestions.has(q.question)) {
+                                seenQuestions.add(q.question);
+                                combined.push(q);
+                            }
+                        });
+                        
+                        // Shuffle combined array
+                        for (let i = combined.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [combined[i], combined[j]] = [combined[j], combined[i]];
+                        }
+
+                        questionQueue.push(...combined);
+                        
+                    } else if (subTopicParam === 'politics' || gkCatIdParams === '24') {
+                        // Custom Politics Questions focusing on specific targets
+                        const politicsQuestions = [
+                            // Political Theory
+                            { question: "Who is the author of the influential political treatise 'The Prince'?", incorrect_answers: ["Socrates", "Thomas Hobbes", "John Locke"], correct_answer: "Niccolò Machiavelli" },
+                            { question: "Which political ideology advocates for an egalitarian society where the means of production are commonly owned?", incorrect_answers: ["Capitalism", "Fascism", "Libertarianism"], correct_answer: "Communism" },
+                            { question: "In political theory, what does 'Social Contract' refer to?", incorrect_answers: ["A trade agreement between nations", "A legal marriage contract", "A media contract for politicians"], correct_answer: "The agreement of individuals to form a society and accept its rules" },
+                            
+                            // Human Rights
+                            { question: "In what year was the Universal Declaration of Human Rights adopted by the United Nations?", incorrect_answers: ["1918", "1964", "1990"], correct_answer: "1948" },
+                            { question: "Which international organization is primarily responsible for monitoring and protecting human rights globally?", incorrect_answers: ["World Trade Organization", "International Monetary Fund", "North Atlantic Treaty Organization"], correct_answer: "United Nations" },
+                            { question: "What does NGO stand for in the context of international human rights?", incorrect_answers: ["National Government Organization", "New Global Order", "Non-Guaranteed Organization"], correct_answer: "Non-Governmental Organization" },
+                            
+                            // Environmental Policy & Climate Change
+                            { question: "What is the primary goal of the 2015 Paris Agreement?", incorrect_answers: ["To end world hunger", "To establish global trade tariffs", "To prevent space weaponization"], correct_answer: "To limit global warming to well below 2 degrees Celsius" },
+                            { question: "Which greenhouse gas is most commonly targeted by environmental policies for reduction?", incorrect_answers: ["Nitrous Oxide", "Methane", "Ozone"], correct_answer: "Carbon Dioxide (CO2)" },
+                            { question: "What term describes a tax levied on the carbon content of fuels to reduce greenhouse gas emissions?", incorrect_answers: ["Income Tax", "Corporate Tax", "Sales Tax"], correct_answer: "Carbon Tax" },
+                            
+                            // Media Influence
+                            { question: "What phenomenon occurs when media algorithms only show users information that aligns with their existing beliefs?", incorrect_answers: ["The Mandela Effect", "Cognitive Dissonance", "The Streisand Effect"], correct_answer: "Echo Chamber / Filter Bubble" },
+                            { question: "In politics, what is 'spin'?", incorrect_answers: ["A physical campaign trail journey", "A method of voting electronically", "Changing political party affiliations"], correct_answer: "A heavily biased portrayal of an event to influence public opinion" },
+                            { question: "Which term describes the intentional creation and spread of false information for political gain?", incorrect_answers: ["Misinformation", "Satire", "Censorship"], correct_answer: "Disinformation" },
+                            
+                            // Contemporary Issues (AI, Populism)
+                            { question: "How does Artificial Intelligence most notably challenge modern democratic elections?", incorrect_answers: ["By physically destroying ballot boxes", "By creating new political parties", "By running for office automatically"], correct_answer: "Through the use of deepfakes and automated disinformation campaigns" },
+                            { question: "What is a core characteristic of a 'populist' political movement?", incorrect_answers: ["Strict adherence to aristocratic rule", "Complete abolition of government", "Focusing exclusively on foreign policy"], correct_answer: "Pitting 'ordinary people' against an established 'elite'" },
+                            { question: "Which emerging technology has raised major political debates regarding privacy and mass state surveillance?", incorrect_answers: ["3D Printing", "Virtual Reality", "Quantum Computing"], correct_answer: "Facial Recognition AI" }
+                        ];
+                        const combined = pickBatch(politicsQuestions, 'gk_politics', 10);
+                        
+                        // Fetch from OpenTDB for unlimited questions
+                        let onlineQuestions = [];
+                        try {
+                            const response = await fetch('https://opentdb.com/api.php?amount=10&category=24&type=multiple');
+                            const data = await response.json();
+                            if (data.results) {
+                                onlineQuestions = data.results.map(q => {
+                                    const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                    for (let i = options.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [options[i], options[j]] = [options[j], options[i]];
+                                    }
+                                    return {
+                                        question: decodeHTML(q.question),
+                                        options: options,
+                                        correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                        translated: false
+                                    };
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch online politics questions", e);
+                        }
+
+                        // Push unseen online questions
+                        onlineQuestions.forEach(q => {
+                            if (!seenQuestions.has(q.question)) {
+                                seenQuestions.add(q.question);
+                                combined.push(q);
+                            }
+                        });
+                        
+                        // Shuffle combined array
+                        for (let i = combined.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [combined[i], combined[j]] = [combined[j], combined[i]];
+                        }
+
+                        questionQueue.push(...combined);
+
+                    } else if (subTopicParam === 'literature' || gkCatIdParams === '10') {
+                        // Custom Literature Questions focusing on specific targets
+                        const literatureQuestions = [
+                            // Themes (Love, Power, Identity, Conflict)
+                            { question: "Which classic novel powerfully explores the themes of systemic racism and moral growth in the American South?", incorrect_answers: ["The Great Gatsby", "Moby-Dick", "The Catcher in the Rye"], correct_answer: "To Kill a Mockingbird" },
+                            { question: "In George Orwell's '1984', what central theme is primarily explored through the ruling Party and Big Brother?", incorrect_answers: ["The beauty of nature", "The importance of romance", "The evolution of technology"], correct_answer: "Totalitarianism and absolute power" },
+                            { question: "Which Shakespearean play is most famously driven by the tragic theme of blinding ambition and the pursuit of power?", incorrect_answers: ["A Midsummer Night's Dream", "Romeo and Juliet", "Twelfth Night"], correct_answer: "Macbeth" },
+                            { question: "The theme of forbidden love and inevitable conflict is famously central to which of these literary works?", incorrect_answers: ["The Odyssey", "Frankenstein", "Don Quixote"], correct_answer: "Romeo and Juliet" },
+                            
+                            // Genres
+                            { question: "Which literary genre uses magical elements in otherwise mundane, realistic environments?", incorrect_answers: ["High Fantasy", "Cyberpunk", "Space Opera"], correct_answer: "Magical Realism" },
+                            { question: "What genre of literature is characterized by a bleak, oppressive society, often futuristic, where individuals are strictly controlled?", incorrect_answers: ["Utopia", "Historical Fiction", "Romanticism"], correct_answer: "Dystopian Fiction" },
+                            { question: "Which genre heavily relies on atmosphere, emotional distress, the supernatural, and ancient medieval settings?", incorrect_answers: ["Pulp Fiction", "Satire", "Realism"], correct_answer: "Gothic Literature" },
+                            
+                            // Historical Contexts
+                            { question: "The 'Lost Generation' of writers, including F. Scott Fitzgerald and Ernest Hemingway, came of age during which historical event?", incorrect_answers: ["The American Civil War", "World War II", "The Vietnam War"], correct_answer: "World War I" },
+                            { question: "Which literary movement emerged in the late 18th century as a revolt against the aristocratic and scientific rationalization of nature?", incorrect_answers: ["Modernism", "Postmodernism", "Naturalism"], correct_answer: "Romanticism" },
+                            { question: "Charles Dickens' 'A Tale of Two Cities' is set in London and Paris before and during which major historical event?", incorrect_answers: ["The Industrial Revolution", "The Hundred Years' War", "The Russian Revolution"], correct_answer: "The French Revolution" },
+                            
+                            // Critical Analysis / Famous Works
+                            { question: "What is the primary narrative perspective used when a story is told using 'I' or 'we'?", incorrect_answers: ["Second-person", "Third-person omniscient", "Third-person limited"], correct_answer: "First-person perspective" },
+                            { question: "In literature, what does a 'bildungsroman' primarily focus on?", incorrect_answers: ["A murder mystery", "A tragic romance", "A war documentary"], correct_answer: "The psychological and moral growth of the protagonist from youth to adulthood" },
+                            { question: "The repeated use of the 'green light' at the end of Daisy's dock in F. Scott Fitzgerald's 'The Great Gatsby' is an example of what literary device?", incorrect_answers: ["Alliteration", "Onomatopoeia", "Hyperbole"], correct_answer: "Symbolism" },
+                            { question: "Which 19th-century author critically analyzed societal expectations of women in the novel 'Pride and Prejudice'?", incorrect_answers: ["Mary Shelley", "Emily Brontë", "Charlotte Brontë"], correct_answer: "Jane Austen" },
+                            { question: "In literary analysis, what is the term for the turning point or the highest point of tension in a narrative?", incorrect_answers: ["Exposition", "Rising Action", "Resolution"], correct_answer: "Climax" }
+                        ];
+
+                        const combined = pickBatch(literatureQuestions, 'gk_literature', 10);
+                        
+                        // Fetch from OpenTDB for unlimited questions (Category 10: Entertainment: Books)
+                        let onlineQuestions = [];
+                        try {
+                            const response = await fetch('https://opentdb.com/api.php?amount=10&category=10&type=multiple');
+                            const data = await response.json();
+                            if (data.results) {
+                                onlineQuestions = data.results.map(q => {
+                                    const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                    for (let i = options.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [options[i], options[j]] = [options[j], options[i]];
+                                    }
+                                    return {
+                                        question: decodeHTML(q.question),
+                                        options: options,
+                                        correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                        translated: false
+                                    };
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch online literature questions", e);
+                        }
+
+                        // Push unseen online questions
+                        onlineQuestions.forEach(q => {
+                            if (!seenQuestions.has(q.question)) {
+                                seenQuestions.add(q.question);
+                                combined.push(q);
+                            }
+                        });
+                        
+                        // Shuffle combined array
+                        for (let i = combined.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [combined[i], combined[j]] = [combined[j], combined[i]];
+                        }
+
+                        questionQueue.push(...combined);
+
+                    } else if (subTopicParam === 'art' || gkCatIdParams === '25') {
+                        // Custom Arts and Culture Questions focusing on specific targets
+                        const artQuestions = [
+                            // Architecture
+                            { question: "Which architectural style is characterized by pointed arches, ribbed vaults, and flying buttresses?", incorrect_answers: ["Romanesque", "Baroque", "Neoclassical"], correct_answer: "Gothic" },
+                            { question: "The Parthenon in Athens is a famous example of which architectural order?", incorrect_answers: ["Ionic", "Corinthian", "Tuscan"], correct_answer: "Doric" },
+                            { question: "Who was the legendary architect of the Guggenheim Museum in New York City?", incorrect_answers: ["Le Corbusier", "Zaha Hadid", "Antoni Gaudí"], correct_answer: "Frank Lloyd Wright" },
+                            
+                            // Visual Arts
+                            { question: "Who painted the famous artwork 'The Starry Night'?", incorrect_answers: ["Claude Monet", "Pablo Picasso", "Salvador Dalí"], correct_answer: "Vincent van Gogh" },
+                            { question: "Which Renaissance artist sculpted the famous marble statue of 'David'?", incorrect_answers: ["Leonardo da Vinci", "Donatello", "Raphael"], correct_answer: "Michelangelo" },
+                            { question: "The art movement known as 'Cubism' was co-founded by Georges Braque and which other famous artist?", incorrect_answers: ["Henri Matisse", "Edvard Munch", "Jackson Pollock"], correct_answer: "Pablo Picasso" },
+                            { question: "What material was traditionally used to create the terracotta army in China?", incorrect_answers: ["Bronze", "Marble", "Jade"], correct_answer: "Clay" },
+                            
+                            // Performing Arts
+                            { question: "Which famous ballet composer wrote 'Swan Lake' and 'The Nutcracker'?", incorrect_answers: ["Ludwig van Beethoven", "Wolfgang Amadeus Mozart", "Johann Sebastian Bach"], correct_answer: "Pyotr Ilyich Tchaikovsky" },
+                            { question: "Kabuki is a classical form of dance-drama originating from which country?", incorrect_answers: ["China", "India", "South Korea"], correct_answer: "Japan" },
+                            { question: "In classical music, what is a 'Sonata' primarily?", incorrect_answers: ["A vocal piece for a choir", "A ballet performance accompaniment", "A quick folk dance"], correct_answer: "A musical composition for a solo instrument or a small instrumental ensemble" },
+                            
+                            // Literature & Culture
+                            { question: "The 'Epic of Gilgamesh' is one of the oldest known pieces of literature. From which ancient region did it originate?", incorrect_answers: ["Ancient Egypt", "Indus Valley", "Ancient Greece"], correct_answer: "Mesopotamia" },
+                            { question: "Which literary and cultural movement during the 1920s heavily featured African American art, music, and literature?", incorrect_answers: ["The Beat Generation", "The Transcendentalist Movement", "The Enlightenment"], correct_answer: "The Harlem Renaissance" },
+                            
+                            // Religious Philosophies
+                            { question: "In Buddhist philosophy, what is the ultimate state of liberation from the cycle of rebirth called?", incorrect_answers: ["Karma", "Dharma", "Samsara"], correct_answer: "Nirvana" },
+                            { question: "Which ancient Chinese philosopher heavily emphasized filial piety, respect for elders, and a structured society?", incorrect_answers: ["Laozi", "Sun Tzu", "Zhuangzi"], correct_answer: "Confucius" },
+                            { question: "The concept of 'Yin and Yang', representing dualism and interconnected forces, comes from which philosophy?", incorrect_answers: ["Hinduism", "Shinto", "Zoroastrianism"], correct_answer: "Daoism (Taoism)" }
+                        ];
+
+                        const combined = pickBatch(artQuestions, ['gk_arts_culture', 'gk_arts'], 10);
+                        
+                        // Fetch from OpenTDB for unlimited questions (Category 25: Art)
+                        let onlineQuestions = [];
+                        try {
+                            const response = await fetch('https://opentdb.com/api.php?amount=10&category=25&type=multiple');
+                            const data = await response.json();
+                            if (data.results) {
+                                onlineQuestions = data.results.map(q => {
+                                    const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                    for (let i = options.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [options[i], options[j]] = [options[j], options[i]];
+                                    }
+                                    return {
+                                        question: decodeHTML(q.question),
+                                        options: options,
+                                        correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                        translated: false
+                                    };
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Failed to fetch online art questions", e);
+                        }
+
+                        // Push unseen online questions
+                        onlineQuestions.forEach(q => {
+                            if (!seenQuestions.has(q.question)) {
+                                seenQuestions.add(q.question);
+                                combined.push(q);
+                            }
+                        });
+                        
+                        // Shuffle combined array
+                        for (let i = combined.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [combined[i], combined[j]] = [combined[j], combined[i]];
+                        }
+
+                        questionQueue.push(...combined);
+
+                    } else if (subTopicParam === 'organizations') {
+                        // Custom Int. Organizations Questions focusing on specific targets
+                        const orgQuestions = [
+                            // United Nations (UN)
+                            { question: "When was the United Nations officially established?", incorrect_answers: ["1919", "1939", "1955"], correct_answer: "1945" },
+                            { question: "Where is the headquarters of the United Nations located?", incorrect_answers: ["Geneva, Switzerland", "Paris, France", "London, UK"], correct_answer: "New York City, USA" },
+                            { question: "Which UN organ is primarily responsible for maintaining international peace and security?", incorrect_answers: ["General Assembly", "International Court of Justice", "Economic and Social Council"], correct_answer: "Security Council" },
+                            { question: "How many permanent members are on the UN Security Council?", incorrect_answers: ["3", "7", "10"], correct_answer: "5" },
+                            { question: "Which UN agency focuses heavily on global public health?", incorrect_answers: ["UNICEF", "UNESCO", "WTO"], correct_answer: "WHO (World Health Organization)" },
+                            
+                            // NATO
+                            { question: "What does NATO stand for?", incorrect_answers: ["National Alliance Treaty Organization", "North American Trade Organization", "Non-Aligned Treaty Organization"], correct_answer: "North Atlantic Treaty Organization" },
+                            { question: "NATO is primarily what type of alliance?", incorrect_answers: ["Economic", "Environmental", "Cultural"], correct_answer: "Military" },
+                            { question: "Article 5 of the NATO treaty fundamentally states:", incorrect_answers: ["All members share the same currency", "Members must speak a common language", "Members must dismantle nuclear weapons"], correct_answer: "An attack on one member is an attack on all" },
+                            { question: "Where is the main headquarters of NATO located?", incorrect_answers: ["Washington D.C., USA", "Berlin, Germany", "London, UK"], correct_answer: "Brussels, Belgium" },
+                            
+                            // WTO & Economic Development
+                            { question: "Which global organization deals with the global rules of trade between nations?", incorrect_answers: ["International Monetary Fund", "World Bank", "United Nations"], correct_answer: "World Trade Organization (WTO)" },
+                            { question: "The World Bank's primary function is to:", incorrect_answers: ["Set global interest rates", "Regulate stock markets", "Print international currency"], correct_answer: "Provide loans and grants for capital projects in poorer countries" },
+                            { question: "Which institution works to secure financial stability, facilitate international trade, and reduce global poverty?", incorrect_answers: ["WTO", "OECD", "G20"], correct_answer: "International Monetary Fund (IMF)" },
+                            
+                            // Humanitarian Aid & Peacekeeping
+                            { question: "UN Peacekeepers are often distinguished by the color of their helmets. What color is it?", incorrect_answers: ["White", "Green", "Red"], correct_answer: "Blue" },
+                            { question: "Which international organization provides emergency assistance, disaster relief, and education worldwide, focusing heavily on mothers and children?", incorrect_answers: ["UNESCO", "WHO", "UNHCR"], correct_answer: "UNICEF" },
+                            { question: "Which organization is mandated to aid and protect refugees, forcibly displaced communities, and stateless people?", incorrect_answers: ["Amnesty International", "Red Cross", "Human Rights Watch"], correct_answer: "UNHCR" },
+                            { question: "The International Committee of the Red Cross (ICRC) has a special mandate based on which treaties?", incorrect_answers: ["The Treaty of Versailles", "The Paris Agreement", "The Kyoto Protocol"], correct_answer: "The Geneva Conventions" },
+                            
+                            // Environmental Regulation
+                            { question: "Which international agreement aimed to reduce ozone-depleting substances?", incorrect_answers: ["Kyoto Protocol", "Paris Agreement", "Copenhagen Accord"], correct_answer: "Montreal Protocol" },
+                            { question: "The UN Environment Programme (UNEP) is headquartered in which city?", incorrect_answers: ["Geneva", "New York", "Paris"], correct_answer: "Nairobi, Kenya" },
+                            { question: "Which global environmental treaty specifically aims to hold the increase in the global average temperature to well below 2°C?", incorrect_answers: ["Kyoto Protocol", "Montreal Protocol", "Rio Declaration"], correct_answer: "Paris Agreement" }
+                        ];
+
+                        const combined = pickBatch(orgQuestions, ['gk_intl_orgs', 'gk_organizations'], 10);
+                        questionQueue.push(...combined);
+
+                    } else {
+                        // If a specific topic ID was passed, use it. Otherwise, default to 9 (General Knowledge)
+                        const categoryId = gkCatIdParams ? gkCatIdParams : '9';
+                        let apiUrl = `https://opentdb.com/api.php?amount=10&category=${categoryId}&type=multiple`;
+    
+                        try {
+                            const response = await fetch(apiUrl);
+                            const data = await response.json();
+                            
+                            if (data.results) {
+                                const newQuestions = data.results.map(q => {
+                                    const options = [...q.incorrect_answers, q.correct_answer].map(decodeHTML);
+                                    // Shuffle options
+                                    for (let i = options.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [options[i], options[j]] = [options[j], options[i]];
+                                    }
+                                    return {
+                                        question: decodeHTML(q.question),
+                                        options: options,
+                                        correctAnswer: options.indexOf(decodeHTML(q.correct_answer)),
+                                        translated: false
+                                    };
+                                });
+                                
+                                const dbQuestions = pickBatch([], 'gk_general', 5);
+                                newQuestions.push(...dbQuestions);
+                                
+                                // Shuffle everything
+                                for (let i = newQuestions.length - 1; i > 0; i--) {
+                                    const j = Math.floor(Math.random() * (i + 1));
+                                    [newQuestions[i], newQuestions[j]] = [newQuestions[j], newQuestions[i]];
+                                }
+                                
+                                let uniqueGK = newQuestions.filter(q => !seenQuestions.has(q.question));
+                                
+                                // Reset logic if the API starts looping or is exhausted
+                                if (uniqueGK.length === 0 && newQuestions.length > 0) {
+                                    seenQuestions.clear();
+                                    saveSeen();
+                                    uniqueGK = newQuestions;
+                                }
+                                
+                                uniqueGK.forEach(q => {
+                                    seenQuestions.add(q.question);
+                                });
+                                
+                                questionQueue.push(...uniqueGK);
+                            }
+                        } catch (e) {
+                            console.error("API Fetch Error in Catchall:", e);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch questions", err);
+            } finally {
+                saveSeen(); // Save state after fetching
+                isFetching = false;
+                // If we were waiting for questions to load
+                if (!currentQ && questionQueue.length > 0) {
+                    currentQ = questionQueue.shift();
+                    await prepareAndLoadQuestion();
+                } else if (!currentQ) {
+                    // Retry on failure
+                    setTimeout(fetchQuestions, 2000);
+                }
+            }
+        }
+
+        async function initQuiz() {
+            document.getElementById('loader-text').innerText = t.loading;
+            await fetchQuestions();
+            
+            // Explicitly load the first question if it wasn't triggered
+            if (!currentQ && questionQueue.length > 0) {
+                await nextQuestion();
+            }
+        }
+
+        async function prepareAndLoadQuestion() {
+            // Check if we need to translate dynamically first
+            if (langParam !== 'en' && !currentQ.translated) {
+                document.getElementById('loader-text').innerText = t.translating;
+                clearInterval(timerInterval);
+                timerElement.innerText = "-";
+
+                // Translate Question AND all Options concurrently
+                currentQ.question = await translateText(currentQ.question);
+                currentQ.options = await Promise.all(currentQ.options.map(opt => translateText(opt)));
+                currentQ.translated = true;
+            }
+            
+            // Now render the UI
+            loadQuestionUI();
+        }
+
+        function loadQuestionUI() {
+            // Reset state
+            selectedOptionIndex = null;
+            submitBtn.disabled = true;
+            submitBtn.innerText = t.submit;
+            submitBtn.onclick = submitAnswer;
+            skipBtn.disabled = false;
+            
+            // Reveal UI, hide loader
+            document.getElementById('initial-loader').style.display = 'none';
+            document.getElementById('timer-container').style.display = 'block';
+            document.getElementById('quiz-box').style.display = 'block';
+            
+            // Update UI
+            questionText.innerText = currentQ.question;
+            optionsContainer.innerHTML = ''; // Clear previous options
+            
+            // Render options
+            currentQ.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="option-label">${labels[index]}:</span> ${option}`;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Start Timer
+            startTimer();
+
+            // Fetch more questions if we are running low to keep it continuous
+            if (questionQueue.length < 3) {
+                fetchQuestions();
+            }
+        }
+
+        function selectOption(index) {
+            // Prevent selection if disabled
+            if (optionsContainer.children[0] && optionsContainer.children[0].disabled) return;
+            
+            selectedOptionIndex = index;
+            submitBtn.disabled = false;
+
+            // Visual update
+            Array.from(optionsContainer.children).forEach((btn, i) => {
+                btn.classList.remove('selected');
+                if (i === index) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = timeParam; // Use dynamic timer based on user selection
+            timerElement.innerText = timeLeft;
+            timerElement.className = 'timer-circle'; // Reset styling
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.innerText = timeLeft;
+
+                if (timeLeft <= 5 && timeLeft > 0) {
+                    timerElement.classList.add('timer-warning');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.innerText = "0";
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            // If they ran out of time, count it as wrong automatically
+            scoreWrong++;
+            updateScores();
+            
+            const buttons = Array.from(optionsContainer.children);
+            
+            // Disable all buttons and show correct answer
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === currentQ.correctAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            // Flying effect for wrong
+            createFlyingEffect('🐍');
+
+            // Change submit to next button
+            skipBtn.disabled = true;
+            submitBtn.disabled = false;
+            submitBtn.innerText = t.next;
+            submitBtn.onclick = nextQuestion;
+        }
+
+        function submitAnswer() {
+            clearInterval(timerInterval); // Stop timer
+            
+            const buttons = Array.from(optionsContainer.children);
+            
+            // Disable all buttons so user cannot change answer
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Check if correct
+            if (selectedOptionIndex === currentQ.correctAnswer) {
+                buttons[selectedOptionIndex].classList.add('correct');
+                scoreCorrect++;
+                createFlyingEffect('🦋');
+            } else {
+                buttons[selectedOptionIndex].classList.add('wrong');
+                // Highlight the correct one as well
+                buttons[currentQ.correctAnswer].classList.add('correct');
+                scoreWrong++;
+                createFlyingEffect('🐍');
+            }
+
+            updateScores();
+
+            // Transform Submit button into Next button
+            skipBtn.disabled = true;
+            submitBtn.innerText = t.next;
+            submitBtn.onclick = nextQuestion;
+        }
+
+        function createFlyingEffect(emoji) {
+            const container = document.body;
+            for(let i=0; i<30; i++) {
+                const el = document.createElement('div');
+                el.innerText = emoji;
+                el.style.position = 'fixed';
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.top = '100vh';
+                el.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                el.style.zIndex = '9999';
+                el.style.pointerEvents = 'none';
+                el.style.transition = `transform ${Math.random() * 2 + 2}s linear, top ${Math.random() * 2 + 2}s linear`;
+                
+                container.appendChild(el);
+                
+                setTimeout(() => {
+                    el.style.top = '-10vh';
+                    el.style.transform = `translateX(${(Math.random() - 0.5) * 500}px) rotate(${Math.random() * 360}deg)`;
+                }, 50);
+
+                setTimeout(() => {
+                    if (el.parentNode) el.parentNode.removeChild(el);
+                }, 4000);
+            }
+        }
+
+        function skipQuestion() {
+            clearInterval(timerInterval);
+            // Treat skip as deliberately skipped, separate from wrong
+            scoreSkipped++;
+            updateScores();
+            
+            // Move on entirely
+            nextQuestion();
+        }
+
+        async function nextQuestion() {
+            if (questionQueue.length === 0) {
+                // Wait for questions to be fetched
+                questionText.innerText = t.fetching;
+                optionsContainer.innerHTML = '';
+                currentQ = null;
+                clearInterval(timerInterval);
+                timerElement.innerText = "-";
+                fetchQuestions();
+                return;
+            }
+            
+            currentQ = questionQueue.shift();
+            await prepareAndLoadQuestion();
+        }
+
+        function updateScores() {
+            scoreRightElement.innerText = scoreCorrect;
+            scoreWrongElement.innerText = scoreWrong;
+            scoreSkipElement.innerText = scoreSkipped;
+        }
+
+        // Start the game on load
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
+

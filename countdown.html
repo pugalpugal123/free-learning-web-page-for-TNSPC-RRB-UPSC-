@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Ready...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #FFD700 0%, #FFDF00 50%, #FFEA00 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; 
+        }
+
+        #countdown-text {
+            font-weight: 800;
+            font-size: 15rem;
+            color: #111111;
+            text-transform: uppercase;
+            text-shadow: 6px 6px 20px rgba(0, 0, 0, 0.2);
+            /* Pulse animation for the numbers */
+            animation: popIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+            text-align: center;
+        }
+
+        /* Styling for the START word */
+        .start-text {
+            font-size: 8rem !important;
+            letter-spacing: 5px;
+            /* A different bounce animation when it finishes */
+            animation: bounceIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards !important;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            40% { transform: scale(1.1); opacity: 1; }
+            80% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            #countdown-text { font-size: 10rem; }
+            .start-text { font-size: 5rem !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="countdown-text">5</div>
+
+    <script>
+        let count = 5;
+        const countdownElement = document.getElementById('countdown-text');
+
+        const timer = setInterval(() => {
+            count--;
+            if (count > 0) {
+                // Change the number
+                countdownElement.innerText = count;
+                
+                // Force animation restart by removing and adding it back
+                countdownElement.style.animation = 'none';
+                void countdownElement.offsetWidth; /* trigger reflow */
+                countdownElement.style.animation = null; 
+            } else {
+                // Clear the interval when we hit 0
+                clearInterval(timer);
+                
+                // Change text and apply the final START animation class
+                countdownElement.innerText = 'START!';
+                countdownElement.className = 'start-text';
+                
+                // Redirect immediately after 1 second of showing start
+                // Preserve the category query string
+                setTimeout(() => window.location.href = 'quiz.html' + window.location.search, 1000);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
