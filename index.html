@@ -4,624 +4,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Learning</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #FFD700 0%, #FFDF00 50%, #FFEA00 100%);
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            /* Center content vertically */
-            align-items: center;
-            /* Center content horizontally */
-            font-family: 'Inter', sans-serif;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        h1 {
-            font-weight: 800;
-            font-size: 2.5rem;
-            color: #111111;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin: 0 0 40px 0;
-            /* Add bottom margin to space it from the containers */
-            text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
-            animation: slideDown 0.8s ease-out;
-            text-align: center;
-        }
-
-        /* Page Title - Top Left */
-        .page-title {
-            position: absolute;
-            top: 20px;
-            left: 25px;
-            z-index: 100;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 1.6rem;
-            color: #111;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            cursor: default;
-            user-select: none;
-            background: linear-gradient(90deg, #111 0%, #d4af37 50%, #111 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleShine 3s ease-in-out infinite;
-        }
-
-        .page-title .highlight {
-            -webkit-text-fill-color: #d4af37;
-        }
-
-        @keyframes titleShine {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
-        }
-
-        /* Header Controls Container in Top Right */
-        .header-controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .dropdown-container {
-            position: relative;
-        }
-
-        .custom-select {
-            appearance: none;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #111;
-            border-radius: 50px;
-            padding: 10px 35px 10px 20px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            color: #111;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s ease;
-            width: 170px;
-        }
-
-        .custom-select:hover {
-            transform: scale(1.05);
-            background: #ffffff;
-        }
-
-        .select-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #111;
-            pointer-events: none;
-        }
-
-        /* 3 Category Containers below */
-        .categories-grid {
-            display: flex;
-            gap: 25px;
-            width: 100%;
-            max-width: 1100px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeIn 1s ease-out 0.6s both;
-        }
-
-        .category-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 30px 10px;
-            box-sizing: border-box;
-            flex: 0 0 calc(25% - 19px);
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .category-card:nth-child(5),
-        .category-card:nth-child(6) {
-            flex: 0 0 calc(40% - 20px);
-        }
-
-        .category-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
-            border-color: #ffffff;
-            background: #ffffff;
-        }
-
-        .category-icon {
-            font-size: 3rem;
-            color: #111111;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .category-card:hover .category-icon {
-            transform: scale(1.1);
-            color: #d4af37;
-            /* Gold color on hover */
-        }
-
-        .category-title {
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: #111111;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 950px) {
-            .category-card,
-            .category-card:nth-child(5),
-            .category-card:nth-child(6) {
-                flex: 0 0 calc(33.333% - 20px);
-            }
-        }
-
-        @media (max-width: 750px) {
-            .category-card,
-            .category-card:nth-child(5),
-            .category-card:nth-child(6) {
-                flex: 0 0 calc(50% - 20px);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .page-title {
-                font-size: 1.1rem;
-                top: 15px;
-                left: 15px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-
-            .quiz-box {
-                padding: 20px;
-            }
-
-            .options {
-                gap: 10px;
-            }
-
-            .option-btn {
-                padding: 12px 20px;
-            }
-        }
-
-        .site-footer {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            min-height: 6cm;
-            background-color: #111111; /* Sleeker premium dark black */
-            color: #ffffff;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: stretch;
-            z-index: 10;
-            padding: 30px 40px;
-            box-sizing: border-box;
-            border-top: 4px solid #d4af37;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
-
-        .footer-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 320px;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-left h3 {
-            margin: 0;
-            color: #d4af37;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        
-        .footer-left p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: #aaaaaa;
-            line-height: 1.6;
-        }
-
-        .footer-middle h4,
-        .footer-shopping h4,
-        .footer-right h4 {
-            margin: 0;
-            color: #ffffff;
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .footer-middle h4::after,
-        .footer-shopping h4::after,
-        .footer-right h4::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 3px;
-            background: #d4af37;
-            border-radius: 2px;
-        }
-
-        .footer-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 20px;
-        }
-
-        .footer-link {
-            color: #aaaaaa;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s, padding-left 0.3s;
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-link::before {
-            content: '»';
-            color: #d4af37;
-            margin-right: 5px;
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all 0.3s;
-        }
-
-        .footer-link:hover {
-            color: #ffffff;
-            padding-left: 5px;
-        }
-
-        .footer-link:hover::before {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        .social-icon {
-            color: #aaaaaa;
-            font-size: 1.8rem;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-        }
-
-        .social-icon:hover {
-            color: #111111;
-            background: #d4af37;
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
-        }
-
-        @media (max-width: 768px) {
-            .site-footer {
-                flex-direction: column;
-                padding: 40px 20px;
-                text-align: center;
-            }
-            .footer-section {
-                align-items: center;
-            }
-            .footer-middle h4::after,
-            .footer-shopping h4::after,
-            .footer-right h4::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            .footer-links {
-                text-align: center;
-                justify-items: center;
-            }
-            .footer-link::before {
-                display: none;
-            }
-            .footer-link:hover {
-                padding-left: 0;
-            }
-        }
-
-        /* Animated Background Elements */
-        .bg-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .bg-icon {
-            position: absolute;
-            color: #000000; /* Changed to black */
-            animation: floatUp linear infinite;
-            bottom: -150px;
-            opacity: 0;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.15; /* Adjusted for light black */
-            }
-            85% {
-                opacity: 0.15; /* Adjusted for light black */
-            }
-            100% {
-                transform: translateY(-120vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Individual icon timings */
-        .bg-icon:nth-child(1) { left: 10%; font-size: 4rem; animation-duration: 18s; animation-delay: 0s; }
-        .bg-icon:nth-child(2) { left: 30%; font-size: 5rem; animation-duration: 25s; animation-delay: 4s; }
-        .bg-icon:nth-child(3) { left: 50%; font-size: 3rem; animation-duration: 16s; animation-delay: 2s; }
-        .bg-icon:nth-child(4) { left: 70%; font-size: 6rem; animation-duration: 28s; animation-delay: 8s; }
-        .bg-icon:nth-child(5) { left: 85%; font-size: 4.5rem; animation-duration: 21s; animation-delay: 5s; }
-        .bg-icon:nth-child(6) { left: 20%; font-size: 5.5rem; animation-duration: 23s; animation-delay: 11s; }
-        .bg-icon:nth-child(7) { left: 60%; font-size: 3.5rem; animation-duration: 19s; animation-delay: 7s; }
-        .bg-icon:nth-child(8) { left: 40%; font-size: 2.5rem; animation-duration: 15s; animation-delay: 1s; }
-
-    </style>
+    <title>The Magic Inside the Nib | Story</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <div class="bg-animation">
-        <i class="fa-solid fa-graduation-cap bg-icon"></i>
-        <i class="fa-solid fa-book bg-icon"></i>
-        <i class="fa-solid fa-lightbulb bg-icon"></i>
-        <i class="fa-solid fa-brain bg-icon"></i>
-        <i class="fa-solid fa-pencil bg-icon"></i>
-        <i class="fa-solid fa-globe bg-icon"></i>
-        <i class="fa-solid fa-scroll bg-icon"></i>
-        <i class="fa-solid fa-landmark bg-icon"></i>
-    </div>
+    <main class="container">
+        <article class="story-section english">
+            <header>
+                <h1>The Magic Inside the Nib</h1>
+            </header>
 
-    <div class="page-title">Free Learning</div>
+            <section class="story-content-wrapper">
+                <div class="story-text">
+                    <p>Nine-year-old Arjun sat at his wooden desk in the classroom, his fingers wrapped around a sleek,
+                        midnight-blue fountain pen. It was his most prized possession—a gift from his grandfather. Arjun
+                        was convinced the pen was magic. Every time he used it, his handwriting looked like a row of
+                        perfect pearls on the paper. "It’s the pen," he would whisper to himself. "The pen does all the
+                        work."</p>
+                    <p>One afternoon, while Arjun was carefully copying a poem from the blackboard, his elbow caught the
+                        edge of his desk. Clack.</p>
+                    <p>The pen tumbled through the air and struck the hard stone floor. Arjun gasped and scrambled to
+                        pick it up. His heart sank when he saw the tip. The metal nib was twisted and snapped. In that
+                        moment, Arjun felt his talent break, too. For the rest of the day, he sat in silence, convinced
+                        that his days of beautiful writing were over.</p>
 
-    <div class="header-controls">
-        <div class="dropdown-container">
-            <select class="custom-select" id="language-dropdown" onchange="changeLanguage()">
-                <option value="en">English</option>
-                <option value="ta">தமிழ் (Tamil)</option>
-                <option value="hi">हिन्दी (Hindi)</option>
-            </select>
-            <i class="fa-solid fa-earth-americas select-icon"></i>
-        </div>
-        
-        <div class="dropdown-container">
-            <select class="custom-select" id="timer-dropdown" onchange="changeTime()">
-                <option value="10">⌚ 10 Seconds</option>
-                <option value="15">⌚ 15 Seconds</option>
-                <option value="30">⌚ 30 Seconds</option>
-            </select>
-            <i class="fa-solid fa-stopwatch select-icon"></i>
-        </div>
-    </div>
+                    <button id="showMoreButton" class="show-more-btn">Show More...</button>
+                </div>
+                <div class="story-aside">
+                    <img src="https://azsruyozlxugvemewgyi.supabase.co/storage/v1/object/sign/free%20learning/images/pagesec1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85NTIzYzk2My0wMGQxLTRjOGYtYjNmOC0xNWQwZTNmNGEzNjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJmcmVlIGxlYXJuaW5nL2ltYWdlcy9wYWdlc2VjMS5wbmciLCJpYXQiOjE3NzQyMzM0MTEsImV4cCI6ODY1Nzc0MjMzNDExfQ.kOQZtOcH54B8YMwjD1nPwq-37p9zXt-trEnY-YV3zVw" alt="Antique Fountain Pen" class="story-image">
+                </div>
+            </section>
 
-    <h1>Learn , Practice & Clear</h1>
+            <div id="extraContent" class="story-content-extra">
+                <section>
+                    <h2>The Heavy Heart</h2>
+                    <p>When Arjun reached home, he didn't run to the kitchen for snacks. He sat on the porch, his face
+                        dull and his eyes fixed on his shoes. His grandfather, noticing the heavy cloud over his
+                        grandson, sat down beside him.</p>
+                    <p>"What happened, my little poet?" his grandfather asked gently. "Why is your face so dull today?"
+                    </p>
+                    <p>"The pen you gave me... it fell," Arjun said, his voice trembling. "The nib is broken. My
+                        handwriting is ruined forever, Grandpa. I’ll never write beautifully again because the magic is
+                        gone."</p>
+                </section>
 
-    <!-- The 4 Category Containers below -->
-    <div class="categories-grid">
-        <div class="category-card" onclick="startQuiz('gk')">
-            <i class="fa-solid fa-book-open category-icon"></i>
-            <div class="category-title" id="title-gk">General Knowledge</div>
-        </div>
-        <div class="category-card" onclick="startQuiz('upsc')">
-            <i class="fa-solid fa-building-columns category-icon"></i>
-            <div class="category-title" id="title-upsc">UPSC</div>
-        </div>
-        <div class="category-card" onclick="startQuiz('tnpsc')">
-            <i class="fa-solid fa-map-location-dot category-icon"></i>
-            <div class="category-title" id="title-tnpsc">TNPSC</div>
-        </div>
-        <div class="category-card" onclick="startQuiz('story')">
-            <i class="fa-solid fa-book-open-reader category-icon"></i>
-            <div class="category-title" id="title-story">Relaxing Story</div>
-        </div>
-        <div class="category-card" onclick="startQuiz('communication')">
-            <i class="fa-solid fa-comments category-icon"></i>
-            <div class="category-title" id="title-comm">Communication</div>
-        </div>
-        <div class="category-card" onclick="startQuiz('rbi')">
-            <i class="fa-solid fa-train-subway category-icon"></i>
-            <div class="category-title" id="title-rbi">Railway Recruitment Board (RRB)</div>
-        </div>
-    </div>
+                <section>
+                    <h2>The Grandfather's Secret</h2>
+                    <p>To Arjun’s surprise, his grandfather let out a warm, belly laugh. He didn't say a word. Instead,
+                        he went into the house, took Arjun’s bag, and pulled out the broken pen.</p>
+                    <p>He reached into an old desk drawer and found a dusty, unused pen from years ago. With steady
+                        hands, he unscrewed the broken nib and replaced it with a plain, ordinary one. He handed the pen
+                        back to Arjun and placed a fresh sheet of paper in front of him.</p>
+                    <p>"Write," Grandpa commanded with a smile.</p>
+                    <p>Arjun sighed, certain it would look terrible. But as he touched the paper, the letters appeared
+                        just as elegant and perfect as they had before. He stared at the "new" nib—it was a completely
+                        different shape, yet the writing was the same.</p>
+                </section>
+
+                <section>
+                    <h2>The Realization</h2>
+                    <p>"But... how?" Arjun stammered.</p>
+                    <p>Grandfather placed a hand on Arjun’s shoulder. "The pen is just metal and plastic, Arjun. It was
+                        your hand that knew the curves, and your mind that guided the ink. The magic wasn't in the nib;
+                        the magic was always in you."</p>
+                </section>
+
+                <footer>
+                    <blockquote class="slogan">
+                        "The instrument may change, but the artist remains the same. Your talent is a light within you,
+                        not the lamp you carry."
+                    </blockquote>
+                </footer>
+            </div>
+        </article>
+
+        <article class="story-section tamil" lang="ta">
+            <header>
+                <h1>விரல் நுனி மந்திரம்</h1>
+            </header>
+
+            <section class="story-content-wrapper">
+                <div class="story-text">
+                    <p>ஒன்பது வயது சிறுவன் அர்ஜுன் வகுப்பறையில் தன் மேஜையில் அமர்ந்து, ஒரு அழகான நீல நிற மையை உடைய பேனாவைப்
+                        பிடித்து எழுதிக் கொண்டிருந்தான். அது அவனது தாத்தா அவனுக்கு அன்பளிப்பாகக் கொடுத்த மிக விலைமதிப்பற்ற
+                        பொக்கிஷம். அர்ஜுன் அந்தப் பேனாவில் ஏதோ ஒரு மந்திரம் இருப்பதாகவே நம்பினான். அந்தப் பேனாவைப்
+                        பயன்படுத்தும் போதெல்லாம் அவனது கையெழுத்து முத்து முத்தாக, மிக அழகாகத் தெரியும். "எல்லாம் இந்தப்
+                        பேனாவால்தான்... இதுவே என் அழகான கையெழுத்துக்குக் காரணம்" என்று அவன் அடிக்கடி தனக்குள்ளே
+                        சொல்லிக்கொள்வான்.</p>
+                    <p>ஒரு நாள் மதியம், வகுப்பறையில் அர்ஜுன் ஒரு கவிதையை நோட்டில் எழுதிக் கொண்டிருந்தபோது, எதிர்பாராத விதமாக
+                        அவனது முழங்கை மேஜையின் ஓரத்தில் தட்டியது. 'டக்' என்ற சத்தத்துடன் அந்தப் பேனா கீழே விழுந்தது.</p>
+                    <p>அர்ஜுன் பதற்றத்துடன் அந்தப் பேனாவாவைத் தரையில் இருந்து எடுத்தான். ஆனால், அவன் இதயம் சக்கக் நூறாக
+                        உடைந்தது. பேனாவின் முனை (Nib) வளைந்து உடைந்திருந்தது. "ஐயோ! இனி என்னால் அழகாக எழுத முடியாது, என்
+                        கையெழுத்து இனி மோசமாகிவிடும்" என்று அழுதுகொண்டே தனக்குள்ளே முடிவு செய்தான். அன்று முழுவதும் அவன்
+                        யாரிடமும் பேசவில்லை; எதையும் எழுதவும் இல்லை.</p>
+
+                    <button id="showMoreButtonTamil" class="show-more-btn">மேலும் காண்க...</button>
+                </div>
+                <div class="story-aside">
+                    <img src="https://azsruyozlxugvemewgyi.supabase.co/storage/v1/object/sign/free%20learning/images/page1.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85NTIzYzk2My0wMGQxLTRjOGYtYjNmOC0xNWQwZTNmNGEzNjciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJmcmVlIGxlYXJuaW5nL2ltYWdlcy9wYWdlMS5wbmciLCJpYXQiOjE3NzQyMzM4NzgsImV4cCI6ODgxNzQyMzM4Nzh9.7uDBRmcGWLqQvD22XirCLoL1PloTerWbFBjPmDAIdDs" alt="The Artist's Hand" class="story-image">
+                </div>
+            </section>
+
+            <div id="extraContentTamil" class="story-content-extra">
+                <section>
+                    <h2>சோகமான மாலைப் பொழுது</h2>
+                    <p>பள்ளி முடிந்து வீட்டிற்கு வந்த அர்ஜுன், வழக்கமாக ஓடி வந்து தாத்தாவிடம் பேசமாட்டான். அன்று முகம்
+                        வாடிப் போய் திண்ணையில் சோகமாக அமர்ந்திருந்தான். பேரன் ஏன் வாட்டமாக இருக்கிறான் என்று கவனித்த
+                        தாத்தா, மெதுவாக அவன் அருகில் அமர்ந்தார்.</p>
+                    <p>"என்ன ஆச்சு அர்ஜுன்? முகம் ஏன் இவ்வளவு டல்லாக இருக்கிறது?" என்று கனிவோடு கேட்டார்.</p>
+                    <p>"தாத்தா... நீங்க கொடுத்த அந்தப் பேனா கீழே விழுந்து முனை உடைந்துவிட்டது. இனிமேல் என் கையெழுத்து
+                        அழகாக வராது. நான் இனி நன்றாக எழுத மாட்டேன்" என்று அழுதுகொண்டே சொன்னான்.</p>
+                </section>
+
+                <section>
+                    <h2>தாத்தாவின் ரகசியம்</h2>
+                    <p>அர்ஜுன் சொன்னதைக் கேட்ட தாத்தா, மென்மையாகச் சிரித்தார். அவர் எதுவும் பேசாமல், வீட்டிற்குள் சென்று
+                        அர்ஜுனின் பையிலிருந்து அந்த உடைந்த பேனாவை எடுத்தார்.</p>
+                    <p>தனது பழைய மேஜை டிராயரில் இருந்த ஒரு பழைய, பயன்படுத்தாத பேனாவை எடுத்தார். அதில் இருந்த சாதாரண
+                        முனையை (Nib) கழற்றி, அர்ஜுனின் பேனாவில் பொருத்தினார். பிறகு அந்தப் பேனாவையும் ஒரு காகிதத்தையும்
+                        அர்ஜுனிடம் கொடுத்தார்.</p>
+                    <p>"இப்போது இதில் உன் பெயரை எழுது" என்று சிரித்துக்கொண்டே சொன்னார்.</p>
+                    <p>தன்னால் அழகாக எழுத முடியாது என்ற நம்பிக்கையிலேயே அர்ஜுன் பேனாவைப் பிடித்து எழுதத் தொடங்கினான்.
+                        ஆனால் என்ன ஆச்சரியம்! அந்தப் பழைய முனையைப் பயன்படுத்திய போதும், அவனது கையெழுத்து முன்பைப் போலவே
+                        மிக அழகாகவும் நேர்த்தியாகவும் இருந்தது.</p>
+                </section>
+
+                <section>
+                    <h2>உண்மை புரிந்தது</h2>
+                    <p>"தாத்தா... இது எப்படிச் சாத்தியம்? முனை மாறிவிட்டதே?" என்று வியப்புடன் கேட்டான் அர்ஜுன்.</p>
+                    <p>தாத்தா அவன் தோளில் கை வைத்து, "அர்ஜுன், பேனா என்பது வெறும் பிளாஸ்டிக் மற்றும் உலோகம்தான்.
+                        உன்னுடைய கைகளுக்குத்தான் அந்த வளைவுகளும் எழுத்துக்களும் தெரியும். உன் மனம்தான் அந்த மை எங்கே
+                        செல்ல வேண்டும் என்று முடிவு செய்கிறது. மந்திரம் பேனாவின் முனையில் இல்லை; அந்த மந்திரம் எப்போதும்
+                        உனக்குள்தான் இருந்தது" என்றார்.</p>
+                    <p>அர்ஜுன் மகிழ்ச்சியுடன் தன் கையெழுத்தைப் பார்த்துச் சிரித்தான். திறமை என்பது கருவியில் இல்லை,
+                        தன்னம்பிக்கையில்தான் இருக்கிறது என்பதை அவன் புரிந்துகொண்டான்.</p>
+                </section>
+
+                <footer>
+                    <blockquote class="slogan">
+                        "கருவிகள் மாறலாம், ஆனால் கலைஞன் மாறுவதில்லை. உன்னுடைய திறமை உனக்குள் இருக்கும் ஒளி, நீ கையில்
+                        ஏந்தியிருக்கும் விளக்கு அல்ல."
+                    </blockquote>
+                </footer>
+            </div>
+        </article>
+
+        <nav class="pagination">
+            <a href="../Learn Learn/index.html" class="page-num">Home</a>
+            <a href="relaxing_stories.html" class="page-num active">1</a>
+            <a href="coming_soon_story.html" class="page-num">2</a>
+            <a href="coming_soon_story.html" class="page-num">3</a>
+            <a href="coming_soon_story.html" class="page-num">4</a>
+            <a href="coming_soon_story.html" class="page-num">5</a>
+            <a href="coming_soon_story.html" class="page-num">6</a>
+            <a href="coming_soon_story.html" class="page-num">7</a>
+        </nav>
+    </main>
 
     <script>
-        window.onload = function() {
-            const savedLang = localStorage.getItem('selectedLang');
-            const savedTime = localStorage.getItem('selectedTime');
-            
-            if (savedLang) {
-                document.getElementById('language-dropdown').value = savedLang;
-            }
-            if (savedTime) {
-                document.getElementById('timer-dropdown').value = savedTime;
-            }
-            // Apply language text changes based on current selection
-            changeLanguage();
-        };
+        function setupToggle(buttonId, contentId, moreText, lessText) {
+            const button = document.getElementById(buttonId);
+            const content = document.getElementById(contentId);
 
-        function changeTime() {
-            const time = document.getElementById('timer-dropdown').value;
-            localStorage.setItem('selectedTime', time);
+            button.addEventListener('click', function () {
+                content.classList.toggle('visible');
+                if (content.classList.contains('visible')) {
+                    this.textContent = lessText;
+                } else {
+                    this.textContent = moreText;
+                }
+            });
         }
 
-        function changeLanguage() {
-            const lang = document.getElementById('language-dropdown').value;
-            localStorage.setItem('selectedLang', lang);
-            const titles = {
-                'en': ['General Knowledge', 'UPSC', 'TNPSC', 'Relaxing Story', 'Communication', 'Railway Recruitment Board (RRB)'],
-                'ta': ['பொது அறிவு', 'UPSC', 'TNPSC', 'ஓய்வெடுக்கும் கதைகள்', 'Communication (English Only)', 'Railway Recruitment Board (RRB)'],
-                'hi': ['सामान्य ज्ञान', 'UPSC', 'TNPSC', 'आरामदायक कहानियाँ', 'Communication (English Only)', 'Railway Recruitment Board (RRB)']
-            };
-            document.getElementById('title-gk').innerText = titles[lang][0];
-            document.getElementById('title-upsc').innerText = titles[lang][1];
-            document.getElementById('title-tnpsc').innerText = titles[lang][2];
-            if (document.getElementById('title-story')) document.getElementById('title-story').innerText = titles[lang][3];
-            document.getElementById('title-comm').innerText = titles[lang][4];
-            document.getElementById('title-rbi').innerText = titles[lang][5];
-        }
-
-        function startQuiz(category) {
-            const lang = document.getElementById('language-dropdown').value;
-            const time = document.getElementById('timer-dropdown').value;
-            
-            // Check language restriction for UPSC
-            if (category === 'upsc' && lang === 'ta') {
-                alert("UPSC questions are not available in Tamil. Please select English or Hindi.");
-                return; // Stop navigation
-            }
-            
-            // Check language restriction for TNPSC
-            if (category === 'tnpsc' && lang === 'hi') {
-                alert("TNPSC questions are not available in Hindi. Please select English or Tamil.");
-                return; // Stop navigation
-            }
-            
-            // Check language restriction for Communication
-            if (category === 'communication' && lang !== 'en') {
-                alert("Communication questions are only available in English. Please select English.");
-                return; // Stop navigation
-            }
-            
-            // Check language restriction for RRB
-            if (category === 'rbi' && lang === 'ta') {
-                alert("RRB questions are not available in Tamil. Please select English or Hindi.");
-                return; // Stop navigation
-            }
-
-            // Redirect to sub-categories page instead of countdown if GK or TNPSC is selected
-            if (category === 'gk') {
-                window.location.href = `gk.html?lang=${lang}&time=${time}`;
-            } else if (category === 'tnpsc') {
-                window.location.href = `tnpsc.html?lang=${lang}&time=${time}`;
-            } else if (category === 'story') {
-                window.location.href = `../story/relaxing_stories.html`;
-            } else {
-                window.location.href = `countdown.html?category=${category}&lang=${lang}&time=${time}`;
-            }
-        }
+        setupToggle('showMoreButton', 'extraContent', 'Show More...', 'Show Less');
+        setupToggle('showMoreButtonTamil', 'extraContentTamil', 'மேலும் காண்க...', 'குறைவாகக் காண்க');
     </script>
-    
-    <footer class="site-footer">
-        <div class="footer-section footer-left">
-            <h3>Free Learning</h3>
-            <p>Your ultimate destination for cracking competitive exams. Master TNPSC, UPSC, RRB, and more with our endless question banks.</p>
-            <p style="color: #666; font-size: 0.85rem; margin-top: auto;">&copy; 2026 Free Learning. All rights reserved.</p>
-        </div>
-
-        <div class="footer-section footer-middle">
-            <h4>Important Links</h4>
-            <div class="footer-links">
-                <a href="privacy.html" class="footer-link">Privacy Policy</a>
-                <a href="about.html" class="footer-link">About Us</a>
-                <a href="terms.html" class="footer-link">Terms of Service</a>
-                <a href="contact.html" class="footer-link">Contact Us</a>
-                <a href="disclaimer.html" class="footer-link">Disclaimer</a>
-            </div>
-        </div>
-
-        <div class="footer-section footer-shopping">
-            <h4>Shopping</h4>
-            <div class="footer-links" style="display: flex; flex-direction: column; gap: 12px;">
-                <a href="coming_soon.html?source=surprise" class="footer-link">Books & Materials</a>
-                <a href="coming_soon.html?source=surprise" class="footer-link">Premium Test Series</a>
-                <a href="coming_soon.html?source=surprise" class="footer-link">Merchandise</a>
-            </div>
-        </div>
-
-        <div class="footer-section footer-right">
-            <h4>Connect With Us</h4>
-            <p style="color: #aaaaaa; font-size: 0.95rem; margin-bottom: 5px;">Join our community for daily updates and study materials.</p>
-            <div class="social-icons">
-                <a href="coming_soon.html?source=telegram" class="social-icon" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
-                <a href="coming_soon.html?source=whatsapp" class="social-icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="coming_soon.html?source=youtube" class="social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-            </div>
-        </div>
-    </footer>
 </body>
 
 </html>
