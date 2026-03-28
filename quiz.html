@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="_CgjtjpKAfAjT89F6ZVdYQba0RSRz-z4dI192zmDa-I" />
     <title>General Knowledge Quiz</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -400,11 +401,18 @@
         let globalExternalDB = null;
 
         function loadScript(url) {
+            console.log(`[Quiz] Loading script: ${url}`);
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 script.src = url;
-                script.onload = resolve;
-                script.onerror = reject;
+                script.onload = () => {
+                   console.log(`[Quiz] Successfully loaded: ${url}`);
+                   resolve();
+                };
+                script.onerror = (err) => {
+                   console.error(`[Quiz] Failed to load: ${url}`, err);
+                   reject(err);
+                };
                 document.head.appendChild(script);
             });
         }
@@ -419,14 +427,20 @@
             } else {
                 try {
                     if (categoryParam === 'communication') {
+                        document.getElementById('loader-text').innerText = "Loading Communication Database...";
                         await loadScript('communication_db.js');
                         globalExternalDB = window.COMM_DB;
                     } else {
+                        document.getElementById('loader-text').innerText = "Loading Master Question Database...";
                         await loadScript('questions_database.js');
                         globalExternalDB = window.EXTERNAL_DB;
                     }
                     externalDB = globalExternalDB;
-                } catch (e) { console.log('External DB not found or script load failed.', e); }
+                } catch (e) { 
+                    console.log('External DB not found or script load failed.', e); 
+                    document.getElementById('loader-text').innerText = "Database load failed. Please refresh or check your internet connection.";
+                    document.getElementById('loader-text').style.color = "#ff4757";
+                }
             }
 
             const mapQuestions = (list) => {
