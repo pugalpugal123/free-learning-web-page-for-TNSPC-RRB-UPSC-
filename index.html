@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="_CgjtjpKAfAjT89F6ZVdYQba0RSRz-z4dI192zmDa-I" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L4PZ3GFD9S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-L4PZ3GFD9S');
+    </script>
     <title>Free Learning</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -66,8 +75,13 @@
         }
 
         @keyframes titleShine {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
         }
 
         /* Header Controls Container in Top Right */
@@ -199,6 +213,7 @@
 
         /* Responsive */
         @media (max-width: 950px) {
+
             .category-card,
             .category-card:nth-child(5),
             .category-card:nth-child(6) {
@@ -207,6 +222,7 @@
         }
 
         @media (max-width: 750px) {
+
             .category-card,
             .category-card:nth-child(5),
             .category-card:nth-child(6) {
@@ -244,7 +260,8 @@
             left: 0;
             width: 100%;
             min-height: 6cm;
-            background-color: #111111; /* Sleeker premium dark black */
+            background-color: #111111;
+            /* Sleeker premium dark black */
             color: #ffffff;
             display: flex;
             flex-direction: row;
@@ -274,7 +291,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-        
+
         .footer-left p {
             margin: 0;
             font-size: 0.95rem;
@@ -358,7 +375,7 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .social-icon:hover {
@@ -374,22 +391,27 @@
                 padding: 40px 20px;
                 text-align: center;
             }
+
             .footer-section {
                 align-items: center;
             }
+
             .footer-middle h4::after,
             .footer-shopping h4::after,
             .footer-right h4::after {
                 left: 50%;
                 transform: translateX(-50%);
             }
+
             .footer-links {
                 text-align: center;
                 justify-items: center;
             }
+
             .footer-link::before {
                 display: none;
             }
+
             .footer-link:hover {
                 padding-left: 0;
             }
@@ -409,7 +431,8 @@
 
         .bg-icon {
             position: absolute;
-            color: #000000; /* Changed to black */
+            color: #000000;
+            /* Changed to black */
             animation: floatUp linear infinite;
             bottom: -150px;
             opacity: 0;
@@ -420,12 +443,17 @@
                 transform: translateY(0) rotate(0deg);
                 opacity: 0;
             }
+
             15% {
-                opacity: 0.15; /* Adjusted for light black */
+                opacity: 0.15;
+                /* Adjusted for light black */
             }
+
             85% {
-                opacity: 0.15; /* Adjusted for light black */
+                opacity: 0.15;
+                /* Adjusted for light black */
             }
+
             100% {
                 transform: translateY(-120vh) rotate(360deg);
                 opacity: 0;
@@ -433,15 +461,61 @@
         }
 
         /* Individual icon timings */
-        .bg-icon:nth-child(1) { left: 10%; font-size: 4rem; animation-duration: 18s; animation-delay: 0s; }
-        .bg-icon:nth-child(2) { left: 30%; font-size: 5rem; animation-duration: 25s; animation-delay: 4s; }
-        .bg-icon:nth-child(3) { left: 50%; font-size: 3rem; animation-duration: 16s; animation-delay: 2s; }
-        .bg-icon:nth-child(4) { left: 70%; font-size: 6rem; animation-duration: 28s; animation-delay: 8s; }
-        .bg-icon:nth-child(5) { left: 85%; font-size: 4.5rem; animation-duration: 21s; animation-delay: 5s; }
-        .bg-icon:nth-child(6) { left: 20%; font-size: 5.5rem; animation-duration: 23s; animation-delay: 11s; }
-        .bg-icon:nth-child(7) { left: 60%; font-size: 3.5rem; animation-duration: 19s; animation-delay: 7s; }
-        .bg-icon:nth-child(8) { left: 40%; font-size: 2.5rem; animation-duration: 15s; animation-delay: 1s; }
+        .bg-icon:nth-child(1) {
+            left: 10%;
+            font-size: 4rem;
+            animation-duration: 18s;
+            animation-delay: 0s;
+        }
 
+        .bg-icon:nth-child(2) {
+            left: 30%;
+            font-size: 5rem;
+            animation-duration: 25s;
+            animation-delay: 4s;
+        }
+
+        .bg-icon:nth-child(3) {
+            left: 50%;
+            font-size: 3rem;
+            animation-duration: 16s;
+            animation-delay: 2s;
+        }
+
+        .bg-icon:nth-child(4) {
+            left: 70%;
+            font-size: 6rem;
+            animation-duration: 28s;
+            animation-delay: 8s;
+        }
+
+        .bg-icon:nth-child(5) {
+            left: 85%;
+            font-size: 4.5rem;
+            animation-duration: 21s;
+            animation-delay: 5s;
+        }
+
+        .bg-icon:nth-child(6) {
+            left: 20%;
+            font-size: 5.5rem;
+            animation-duration: 23s;
+            animation-delay: 11s;
+        }
+
+        .bg-icon:nth-child(7) {
+            left: 60%;
+            font-size: 3.5rem;
+            animation-duration: 19s;
+            animation-delay: 7s;
+        }
+
+        .bg-icon:nth-child(8) {
+            left: 40%;
+            font-size: 2.5rem;
+            animation-duration: 15s;
+            animation-delay: 1s;
+        }
     </style>
 </head>
 
@@ -468,7 +542,7 @@
             </select>
             <i class="fa-solid fa-earth-americas select-icon"></i>
         </div>
-        
+
         <div class="dropdown-container">
             <select class="custom-select" id="timer-dropdown" onchange="changeTime()">
                 <option value="10">⌚ 10 Seconds</option>
@@ -510,10 +584,10 @@
     </div>
 
     <script>
-        window.onload = function() {
+        window.onload = function () {
             const savedLang = localStorage.getItem('selectedLang');
             const savedTime = localStorage.getItem('selectedTime');
-            
+
             if (savedLang) {
                 document.getElementById('language-dropdown').value = savedLang;
             }
@@ -548,25 +622,25 @@
         function startQuiz(category) {
             const lang = document.getElementById('language-dropdown').value;
             const time = document.getElementById('timer-dropdown').value;
-            
+
             // Check language restriction for UPSC
             if (category === 'upsc' && lang === 'ta') {
                 alert("UPSC questions are not available in Tamil. Please select English or Hindi.");
                 return; // Stop navigation
             }
-            
+
             // Check language restriction for TNPSC
             if (category === 'tnpsc' && lang === 'hi') {
                 alert("TNPSC questions are not available in Hindi. Please select English or Tamil.");
                 return; // Stop navigation
             }
-            
+
             // Check language restriction for Communication
             if (category === 'communication' && lang !== 'en') {
                 alert("Communication questions are only available in English. Please select English.");
                 return; // Stop navigation
             }
-            
+
             // Check language restriction for RRB
             if (category === 'rbi' && lang === 'ta') {
                 alert("RRB questions are not available in Tamil. Please select English or Hindi.");
@@ -585,12 +659,14 @@
             }
         }
     </script>
-    
+
     <footer class="site-footer">
         <div class="footer-section footer-left">
             <h3>Free Learning</h3>
-            <p>Your ultimate destination for cracking competitive exams. Master TNPSC, UPSC, RRB, and more with our endless question banks.</p>
-            <p style="color: #666; font-size: 0.85rem; margin-top: auto;">&copy; 2026 Free Learning. All rights reserved.</p>
+            <p>Your ultimate destination for cracking competitive exams. Master TNPSC, UPSC, RRB, and more with our
+                endless question banks.</p>
+            <p style="color: #666; font-size: 0.85rem; margin-top: auto;">&copy; 2026 Free Learning. All rights
+                reserved.</p>
         </div>
 
         <div class="footer-section footer-middle">
@@ -615,11 +691,15 @@
 
         <div class="footer-section footer-right">
             <h4>Connect With Us</h4>
-            <p style="color: #aaaaaa; font-size: 0.95rem; margin-bottom: 5px;">Join our community for daily updates and study materials.</p>
+            <p style="color: #aaaaaa; font-size: 0.95rem; margin-bottom: 5px;">Join our community for daily updates and
+                study materials.</p>
             <div class="social-icons">
-                <a href="coming_soon.html?source=telegram" class="social-icon" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
-                <a href="coming_soon.html?source=whatsapp" class="social-icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="coming_soon.html?source=youtube" class="social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="coming_soon.html?source=telegram" class="social-icon" title="Telegram"><i
+                        class="fa-brands fa-telegram"></i></a>
+                <a href="coming_soon.html?source=whatsapp" class="social-icon" title="WhatsApp"><i
+                        class="fa-brands fa-whatsapp"></i></a>
+                <a href="coming_soon.html?source=youtube" class="social-icon" title="YouTube"><i
+                        class="fa-brands fa-youtube"></i></a>
             </div>
         </div>
     </footer>
