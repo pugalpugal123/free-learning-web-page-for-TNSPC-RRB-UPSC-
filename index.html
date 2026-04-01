@@ -93,6 +93,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            align-items: flex-end;
         }
 
         .dropdown-container {
@@ -231,14 +232,43 @@
         }
 
         @media (max-width: 600px) {
+            body {
+                padding-top: 140px;
+                /* Space for absolute header elements */
+                justify-content: flex-start;
+            }
+
             .page-title {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
                 top: 15px;
-                left: 15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100%;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            .header-controls {
+                top: 50px;
+                right: 50%;
+                transform: translateX(50%);
+                flex-direction: row;
+                gap: 10px;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .custom-select {
+                width: 140px;
+                font-size: 0.85rem;
+                padding: 8px 30px 8px 15px;
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+                margin: 20px 0 30px 0;
+                line-height: 1.2;
             }
 
             .quiz-box {

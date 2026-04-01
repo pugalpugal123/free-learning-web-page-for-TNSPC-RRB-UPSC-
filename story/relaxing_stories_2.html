@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="_CgjtjpKAfAjT89F6ZVdYQba0RSRz-z4dI192zmDa-I" />
+    <title>Relaxing Stories | The Little Stone's Great Escape</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        .story-container {
+            margin-bottom: 8rem;
+            padding-bottom: 4rem;
+            border-bottom: 2px dashed var(--divider-color);
+        }
+
+        .story-container:last-child {
+            border-bottom: none;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .main-header h1 {
+            font-size: 4rem;
+            color: #2c3e50;
+        }
+
+        .main-header h1::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Pagination Hover Color to Green */
+        .page-num:hover {
+            background-color: #27ae60;
+            border-color: #27ae60;
+            color: white;
+        }
+
+        /* Stone Animations */
+        @keyframes wiggleStuck {
+            0%, 100% { transform: rotate(-2deg) translateX(-1px); }
+            50% { transform: rotate(2deg) translateX(1px); }
+        }
+
+        @keyframes jumpHappy {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            40% { transform: translateY(-30px) scaleY(1.05) rotate(5deg); }
+            70% { transform: translateY(0) scaleY(0.9) rotate(-5deg); }
+        }
+
+        .stuck-animation {
+            animation: wiggleStuck 1.2s ease-in-out infinite;
+            filter: grayscale(0.3);
+        }
+
+        .happy-animation {
+            animation: jumpHappy 1.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) infinite;
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        .story-aside-victory {
+            flex: 0 0 auto;
+            width: 320px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <header class="main-header">
+            <h1>Relaxing Stories</h1>
+        </header>
+
+        <!-- Story: The Little Stone's Great Escape -->
+        <div class="story-container">
+            <article class="story-section english">
+                <header>
+                    <h1>The Little Stone's Great Escape</h1>
+                </header>
+
+                <section class="story-content-wrapper">
+                    <div class="story-text">
+                        <p>Once upon a time, on a beautiful island, there lived a little stone. Unfortunately, it was buried
+                            deep within the beach sand. Only a tiny fraction—just 5% of it—peeped above the surface, while
+                            the remaining 95% was stuck firmly beneath the ground.</p>
+                        <p>The little stone had a grand dream: it wanted to see the beauty of the world around it.</p>
+                        
+                        <button id="showMoreButtonStone" class="show-more-btn">Show More...</button>
+                    </div>
+                    <div class="story-aside">
+                        <img src="images/stuck_stone.png" alt="Stuck Stone Struggling" class="story-image stuck-animation">
+                    </div>
+                </section>
+
+                <div id="extraContentStone" class="story-content-extra">
+                    <section>
+                        <h2>The Struggle</h2>
+                        <p>Every single day, the stone pushed and struggled, trying to escape the heavy grip of the sand, but
+                            it just couldn't break free. Days turned into weeks, but the stone refused to give up.</p>
+                    </section>
+                    <section>
+                        <h2>The Rainy Season</h2>
+                        <p>Eventually, the rainy season began. Even amidst the heavy downpours, the stone never stopped
+                            trying. The continuous drops of rain hitting the sand, combined with the stone's relentless
+                            effort, slowly began to change things.</p>
+                        <p>After a month of rain, the stone noticed something amazing—it was now 40% visible! Looking around,
+                            it thought, "Wow, I can see so much more than before!"</p>
+                        <p>Filled with new hope, the little stone put even more effort into pushing itself out. Months
+                            passed, and the rainy season continued. The continuous rain softened the ground, making the sand
+                            lose its strength. This helped the stone tremendously, and soon, it was 80% visible.</p>
+                    </section>
+                    <section>
+                        <h2>Victory</h2>
+                        <div class="story-content-wrapper" style="flex-direction: column; align-items: center; gap: 20px;">
+                            <div class="story-aside-victory">
+                                <img src="images/happy_stone.png" alt="Happy Jumping Stone" class="story-image happy-animation">
+                            </div>
+                            <div class="story-text">
+                                <p>Finally, after another month of unwavering determination, the stone broke entirely free from
+                                    the sand. For the first time, it could look around and see the world in a beautiful 360-degree view.
+                                </p>
+                                <p>Overjoyed, the little stone jumped with happiness, realizing it had completely overcome its obstacle.</p>
+                            </div>
+                        </div>
+                    </section>
+                    <footer>
+                        <blockquote class="slogan">
+                            Moral of the Story: Continuous effort + time = Success.
+                        </blockquote>
+                    </footer>
+                </div>
+            </article>
+
+            <article class="story-section tamil" lang="ta">
+                <header>
+                    <h1>சிறிய கல்லின் மாபெரும் வெற்றி</h1>
+                </header>
+
+                <section class="story-content-wrapper">
+                    <div class="story-text">
+                        <p>ஒரு காலத்தில், ஒரு அழகான தீவில், ஒரு சிறிய கல் இருந்தது. அது கடற்கரை மணலில் ஆழமாகப் புதைந்திருந்தது.
+                            அதன் 5% மட்டுமே வெளியே தெரிந்தது, மீதமுள்ள 95% மணலுக்கு அடியில் உறுதியாகச் சிக்கியிருந்தது.</p>
+                        <p>அந்தச் சிறிய கல்லுக்கு ஒரு பெரிய கனவு இருந்தது: அது தன்னைச் சுற்றியுள்ள உலகின் அழகைக் காண விரும்பியது.</p>
+
+                        <button id="showMoreButtonStoneTamil" class="show-more-btn">மேலும் காண்க...</button>
+                    </div>
+                    <div class="story-aside">
+                        <img src="images/stuck_stone.png" alt="சிரமப்படும் சிறிய கல்" class="story-image stuck-animation">
+                    </div>
+                </section>
+
+                <div id="extraContentStoneTamil" class="story-content-extra">
+                    <section>
+                        <h2>முயற்சி</h2>
+                        <p>ஒவ்வொரு நாளும், அந்த கல் மணலின் கடினமான பிடியிலிருந்து தப்பிக்கத் தன்னைத்தானே உந்தித் தள்ளியது, ஆனால்
+                            அதனால் வெளியே வர முடியவில்லை. நாட்கள் கடந்தன, ஆனால் கல் ஒருபோதும் தன் முயற்சியைக் கைவிடவில்லை.</p>
+                    </section>
+                    <section>
+                        <h2>மழைக்காலம்</h2>
+                        <p>இறுதியாக, மழைக்காலம் தொடங்கியது. பலத்த மழைக்கு மத்தியிலும், கல் தனது போராட்டத்தைத் தொடர்ந்தது.
+                            மணலில் தொடர்ந்து விழும் மழைத்துளிகளும், கல்லின் இடைவிடாத முயற்சியும் மெதுவாக மாற்றத்தை ஏற்படுத்தத்
+                            தொடங்கின.</p>
+                        <p>ஒரு மாத மழைக்குப் பிறகு, கல் ஒரு ஆச்சரியமான விஷயத்தைக் கவனித்தது - அது இப்போது 40% வெளியே
+                            தெரிந்தது! சுற்றும் முற்றும் பார்த்த அது, "ஆஹா, முன்பு இருந்ததை விட இப்போது என்னால் இன்னும் அதிகமாகப்
+                            பார்க்க முடிகிறதே!" என்று நினைத்தது.</p>
+                        <p>புதிய நம்பிக்கையுடன், சிறிய கல் தன்னை முழுமையாக வெளியே கொண்டு வர இன்னும் அதிக முயற்சி எடுத்தது.
+                            மாதங்கள் கடந்தன, மழைக்காலமும் தொடர்ந்தது. தொடர் மழையால் பூமி மென்மையாகி, மணல் அதன் பலத்தை இழந்தது.
+                            இது கல்லுக்குப் பெரிதும் உதவியது. விரைவில், அது 80% வெளியே தெரிந்தது.</p>
+                    </section>
+                    <section>
+                        <h2>வெற்றி</h2>
+                        <div class="story-content-wrapper" style="flex-direction: column; align-items: center; gap: 20px;">
+                            <div class="story-aside-victory">
+                                <img src="images/happy_stone.png" alt="Happy Jumping Stone" class="story-image happy-animation">
+                            </div>
+                            <div class="story-text">
+                                <p>இறுதியாக, மேலும் ஒரு மாதத்தின் அசைக்க முடியாத உறுதிக்குப் பிறகு, கல் மணலில் இருந்து முற்றிலும்
+                                    விடுபட்டது. முதல் முறையாக, அது உலகை முழுமையான 360 டிகிரி கோணத்தில் சுற்றிப் பார்க்க முடிந்தது.</p>
+                                <p>அளவற்ற மகிழ்ச்சியில், அந்தச் சிறிய கல் ஆனந்தத்தில் குதித்தது; தான் எதிர்கொண்ட தடையை முழுமையாகத்
+                                    தாண்டிவிட்டதை அது உணர்ந்தது.</p>
+                            </div>
+                        </div>
+                    </section>
+                    <footer>
+                        <blockquote class="slogan">
+                            கதையின் நீதி: தொடர் முயற்சி + காலம் = வெற்றி.
+                        </blockquote>
+                    </footer>
+                </div>
+            </article>
+        </div>
+
+        <nav class="pagination">
+            <a href="../index.html" class="page-num">Home</a>
+            <a href="relaxing_stories.html" class="page-num">1</a>
+            <a href="relaxing_stories_2.html" class="page-num active">2</a>
+            <a href="coming_soon_story.html" class="page-num">3</a>
+            <a href="coming_soon_story.html" class="page-num">4</a>
+            <a href="coming_soon_story.html" class="page-num">5</a>
+            <a href="coming_soon_story.html" class="page-num">6</a>
+            <a href="coming_soon_story.html" class="page-num">7</a>
+        </nav>
+    </main>
+
+    <script>
+        function setupToggle(buttonId, contentId, moreText, lessText) {
+            const button = document.getElementById(buttonId);
+            const content = document.getElementById(contentId);
+
+            if (button && content) {
+                button.addEventListener('click', function () {
+                    content.classList.toggle('visible');
+                    if (content.classList.contains('visible')) {
+                        this.textContent = lessText;
+                    } else {
+                        this.textContent = moreText;
+                    }
+                });
+            }
+        }
+
+        // Setup toggles for the new story
+        setupToggle('showMoreButtonStone', 'extraContentStone', 'Show More...', 'Show Less');
+        setupToggle('showMoreButtonStoneTamil', 'extraContentStoneTamil', 'மேலும் காண்க...', 'குறைவாகக் காண்க');
+    </script>
+</body>
+
+</html>
