@@ -260,27 +260,29 @@
         </div>
     </div>
 
-    <div class="timer-container" id="timer-container" style="display: none;">
-        <div class="timer-circle" id="timer">15</div>
-    </div>
-
-    <!-- Centered Loader -->
-    <div id="initial-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh;">
-        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #111; margin-bottom: 20px;"></i>
-        <h2 style="color: #111;" id="loader-text">Loading endless questions...</h2>
-    </div>
-
-    <div class="quiz-box" id="quiz-box" style="display: none;">
-        <div class="question" id="question-text">Loading question...</div>
-        <div class="options" id="options-container">
-            <!-- Options will be injected by JS -->
+    <main style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <div class="timer-container" id="timer-container" style="display: none;">
+            <div class="timer-circle" id="timer">15</div>
         </div>
-        
-        <div class="controls">
-            <button class="control-btn skip-btn" id="skip-btn" onclick="skipQuestion()">Skip</button>
-            <button class="control-btn submit-btn" id="submit-btn" onclick="submitAnswer()" disabled>Submit</button>
+
+        <!-- Centered Loader -->
+        <div id="initial-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 50vh;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: #111; margin-bottom: 20px;"></i>
+            <h2 style="color: #111;" id="loader-text">Loading endless questions...</h2>
         </div>
-    </div>
+
+        <div class="quiz-box" id="quiz-box" style="display: none;">
+            <div class="question" id="question-text">Loading question...</div>
+            <div class="options" id="options-container">
+                <!-- Options will be injected by JS -->
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn skip-btn" id="skip-btn" onclick="skipQuestion()">Skip</button>
+                <button class="control-btn submit-btn" id="submit-btn" onclick="submitAnswer()" disabled>Submit</button>
+            </div>
+        </div>
+    </main>
 
     <script>
         // Core Variables
