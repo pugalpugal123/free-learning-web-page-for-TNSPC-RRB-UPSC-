@@ -429,18 +429,29 @@
             } else {
                 try {
                     if (categoryParam === 'communication') {
-                        document.getElementById('loader-text').innerText = "Loading Communication Database...";
-                        await loadScript('communication_db.js');
-                        globalExternalDB = window.COMM_DB;
+                        if (!window.__loadingCommDb) {
+                            window.__loadingCommDb = loadScript('communication_db.js').then(() => {
+                                globalExternalDB = window.COMM_DB;
+                            }).catch(err => console.error("Communication DB failed:", err));
+                        }
+                        if (!globalExternalDB) {
+                            document.getElementById('loader-text').innerText = "Loading Communication Database...";
+                            await window.__loadingCommDb;
+                        }
+                        externalDB = globalExternalDB;
                     } else {
-                        document.getElementById('loader-text').innerText = "Loading Master Question Database...";
-                        await loadScript('questions_database.js');
-                        globalExternalDB = window.EXTERNAL_DB;
+                        if (!window.__loadingExtDb) {
+                            window.__loadingExtDb = loadScript('questions_database.js').then(() => {
+                                globalExternalDB = window.EXTERNAL_DB;
+                            }).catch(err => console.error("Master DB failed:", err));
+                        }
+                        // Do not await the 18MB master database! Proceed immediately with local/API questions.
+                        // The master DB will be available for subsequent question fetches.
+                        externalDB = globalExternalDB;
                     }
-                    externalDB = globalExternalDB;
                 } catch (e) { 
                     console.log('External DB not found or script load failed.', e); 
-                    document.getElementById('loader-text').innerText = "Database load failed. Please refresh or check your internet connection.";
+                    document.getElementById('loader-text').innerText = "Database load delayed. Loading immediate questions...";
                     document.getElementById('loader-text').style.color = "#ff4757";
                 }
             }
